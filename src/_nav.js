@@ -3,6 +3,7 @@ import CIcon from '@coreui/icons-react'
 import {
   cilAssistiveListeningSystem,
   cilChart,
+  cilMoney,
   cilPencil,
   cilPowerStandby,
   cilSpeedometer,
@@ -44,6 +45,12 @@ const _nav = [
     name: 'Ai Assistant',
     to: '/aiassistant',
     icon: <CIcon icon={cilAssistiveListeningSystem} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Subscription',
+    to: '/subscription',
+    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
