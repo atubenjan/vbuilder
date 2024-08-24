@@ -12,6 +12,7 @@ const routes = [
   { path: '/users', name: 'Users', element: Users },
   { path: '/questions', name: 'Questions Settings', element: Colors },
   { path: '/aiassistant', name: 'Ai Assistant', element: Users },
+  { path: '/subscription', name: 'Subscription', element: Users },
   { path: '/organization', name: 'Organization', element: Colors },
 ]
 
