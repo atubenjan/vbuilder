@@ -16,7 +16,7 @@ import {
   CRow,
 } from '@coreui/react'
 
-const Users = () => {
+const Questions = () => {
   const [selectedQuestions, setSelectedQuestions] = useState([])
   const [questions, setQuestions] = useState([
     {
@@ -158,4 +158,4 @@ const Users = () => {
   )
 }
 
-export default Users
+export default Questions

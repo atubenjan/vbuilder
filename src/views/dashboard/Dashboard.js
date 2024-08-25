@@ -35,12 +35,12 @@ import {
   cifFr,
   cifIn,
   cifPl,
-  cifUs,
   cibTwitter,
   cilCloudDownload,
   cilPeople,
   cilUser,
   cilUserFemale,
+  cifUg,
 } from '@coreui/icons'
 
 import avatar1 from 'src/assets/images/avatars/1.jpg'
@@ -93,7 +93,7 @@ const Dashboard = () => {
         new: true,
         registered: 'Jan 1, 2023',
       },
-      country: { name: 'Uganda', flag: cifUs },
+      country: { name: 'Uganda', flag: cifUg },
       usage: {
         value: 50,
         period: 'Jun 11, 2023 - Jul 10, 2023',
