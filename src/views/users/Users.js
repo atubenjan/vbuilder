@@ -1,160 +1,100 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { QuestionsContext } from '../Questions/QuestionContext'
 import {
   CButton,
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CFormCheck,
-  CFormInput,
-  CFormLabel,
   CModal,
   CModalBody,
-  CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CForm,
+  CFormInput,
+  CFormLabel,
 } from '@coreui/react'
 
 const Users = () => {
-  const [selectedQuestions, setSelectedQuestions] = useState([])
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      question: 'What is the capital of France?',
-      options: ['Berlin', 'Madrid', 'Paris', 'Rome'],
-      answer: 'Paris',
-    },
-    {
-      id: 2,
-      question: 'Which planet is known as the Red Planet?',
-      options: ['Earth', 'Mars', 'Jupiter', 'Saturn'],
-      answer: 'Mars',
-    },
-    {
-      id: 3,
-      question: 'Who wrote "Hamlet"?',
-      options: ['Charles Dickens', 'J.K. Rowling', 'William Shakespeare', 'Mark Twain'],
-      answer: 'William Shakespeare',
-    },
-  ])
-
-  const [visible, setVisible] = useState(false)
-  const [newQuestion, setNewQuestion] = useState('')
-  const [newOptions, setNewOptions] = useState(['', '', '', ''])
-  const [newAnswer, setNewAnswer] = useState('')
-
-  const toggleQuestion = (id) => {
-    setSelectedQuestions((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((questionId) => questionId !== id)
-        : [...prevSelected, id],
-    )
-  }
-
-  const handleAddQuestion = () => {
-    const newId = questions.length + 1
-    const newQuestionObj = {
-      id: newId,
-      question: newQuestion,
-      options: newOptions,
-      answer: newAnswer,
-    }
-    setQuestions([...questions, newQuestionObj])
-
-    // Reset the form fields
-    setNewQuestion('')
-    setNewOptions(['', '', '', ''])
-    setNewAnswer('')
-
-    // Close the modal after submission
-    setVisible(false)
-  }
+  const { addQuestion } = useContext(QuestionsContext)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [question, setQuestion] = useState('')
+  const [options, setOptions] = useState(['', '', '', ''])
+  const [answer, setAnswer] = useState('')
 
   const handleOptionChange = (index, value) => {
-    const updatedOptions = [...newOptions]
-    updatedOptions[index] = value
-    setNewOptions(updatedOptions)
+    const newOptions = [...options]
+    newOptions[index] = value
+    setOptions(newOptions)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const newQuestion = {
+      id: Date.now(),
+      question,
+      options,
+      answer,
+    }
+    addQuestion(newQuestion)
+    // Clear the form after submission
+    setQuestion('')
+    setOptions(['', '', '', ''])
+    setAnswer('')
+    // Close the modal after submission
+    setIsModalOpen(false)
   }
 
   return (
-    <>
-      <CButton color="success" onClick={() => setVisible(true)} className="mb-4">
+    <div>
+      {/* Button to open modal */}
+      <CButton color="primary" onClick={() => setIsModalOpen(true)}>
         Add New Question
       </CButton>
 
-      <CModal visible={visible} onClose={() => setVisible(false)}>
+      {/* Modal */}
+      <CModal visible={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <CModalHeader>
           <CModalTitle>Add New Question</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <CFormLabel htmlFor="question">Question</CFormLabel>
-          <CFormInput
-            id="question"
-            value={newQuestion}
-            onChange={(e) => setNewQuestion(e.target.value)}
-            placeholder="Enter the question"
-          />
-          {newOptions.map((option, index) => (
-            <div key={index}>
-              <CFormLabel htmlFor={`option-${index}`}>Option {index + 1}</CFormLabel>
+          <CForm onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <CFormLabel htmlFor="question">Question:</CFormLabel>
               <CFormInput
-                id={`option-${index}`}
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                placeholder={`Enter option ${index + 1}`}
+                type="text"
+                id="question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                required
               />
             </div>
-          ))}
-          <CFormLabel htmlFor="answer">Correct Answer</CFormLabel>
-          <CFormInput
-            id="answer"
-            value={newAnswer}
-            onChange={(e) => setNewAnswer(e.target.value)}
-            placeholder="Enter the correct answer"
-          />
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
-            Close
-          </CButton>
-          <CButton color="primary" onClick={handleAddQuestion}>
-            Add Question
-          </CButton>
-        </CModalFooter>
-      </CModal>
-
-      <CRow>
-        {questions.map((q) => (
-          <CCol xs={12} key={q.id}>
-            <CCard className="mb-4">
-              <CCardHeader>
-                <strong>{q.question}</strong>
-              </CCardHeader>
-              <CCardBody>
-                {q.options.map((option, index) => (
-                  <CFormCheck
-                    key={index}
-                    type="radio"
-                    name={`question-${q.id}`}
-                    id={`option-${q.id}-${index}`}
-                    label={option}
-                    disabled
-                    checked={option === q.answer}
+            <div className="mb-3">
+              <CFormLabel htmlFor="options">Options:</CFormLabel>
+              {options.map((option, index) => (
+                <div key={index} className="mb-2">
+                  <CFormInput
+                    type="text"
+                    value={option}
+                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                    required
                   />
-                ))}
-                <CButton
-                  color={selectedQuestions.includes(q.id) ? 'danger' : 'primary'}
-                  onClick={() => toggleQuestion(q.id)}
-                >
-                  {selectedQuestions.includes(q.id) ? 'Remove' : 'Add'}
-                </CButton>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        ))}
-      </CRow>
-    </>
+                </div>
+              ))}
+            </div>
+            <div className="mb-3">
+              <CFormLabel htmlFor="answer">Answer:</CFormLabel>
+              <CFormInput
+                type="text"
+                id="answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                required
+              />
+            </div>
+            <CButton type="submit" color="primary">
+              Add Question
+            </CButton>
+          </CForm>
+        </CModalBody>
+      </CModal>
+    </div>
   )
 }
 
