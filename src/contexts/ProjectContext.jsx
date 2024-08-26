@@ -26,6 +26,16 @@ export const ProjectProvider = ({ children }) => {
     setCourses((prevCourses) => [...prevCourses, courseData]);
   };
 
+  const addQuestionToCourse = (courseName, questionText) => {
+    setCourses((prevCourses) => {
+      return prevCourses.map(course => 
+        course.name === courseName 
+          ? { ...course, questions: [...course.questions, questionText] } 
+          : course
+      );
+    });
+  };
+
   return (
     <ProjectContext.Provider value={{ 
       questions, 
@@ -35,7 +45,8 @@ export const ProjectProvider = ({ children }) => {
       addQuestion, 
       addUser, 
       addOrganization, 
-      addCourse 
+      addCourse,
+      addQuestionToCourse 
     }}>
       {children}
     </ProjectContext.Provider>

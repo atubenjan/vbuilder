@@ -2,17 +2,14 @@ import React from "react";
 import Footer from "../components/Footer";
 import PageTitle from "../components/PageTitle";
 import profile from "../assets/profile.jpg";
-import Chatbot from "../components/ChatBot";
 
-const AiAssistant = () => {
+const Organization = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main content area */}
       <div className="flex-grow">
-        <PageTitle text="Ai Assistant" image={profile} showSearch={false} />
-        <div className="px-2 md:px-4">
-          <Chatbot />
-        </div>
+        <PageTitle text="Organization" image={profile} showSearch={false} />
+        <div className="px-2 md:px-4">Organization</div>
       </div>
 
       {/* Footer */}
@@ -23,4 +20,4 @@ const AiAssistant = () => {
   );
 };
 
-export default AiAssistant;
+export default Organization;

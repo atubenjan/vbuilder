@@ -17,7 +17,7 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const questionData = { question, options, correctAnswer };
+    const questionData = { text: question, options, correctAnswer };
     addQuestion(questionData);
 
     // Clear form fields
@@ -31,8 +31,8 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
 
   return (
     isOpen ? (
-      <div className="fixed inset-0 flex items-start justify-center overflow-y-auto bg-gray-700 bg-opacity-50">
-        <div className="w-full max-w-lg p-6 mt-12 bg-white rounded-lg shadow-lg">
+      <div className="fixed inset-0 z-10 flex items-start justify-center overflow-y-auto bg-gray-700 bg-opacity-50">
+        <div className="w-11/12 max-w-lg p-6 mt-12 bg-white rounded-lg shadow-lg md:w-full">
           <h2 className="mb-4 text-2xl font-bold">Add New Question</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

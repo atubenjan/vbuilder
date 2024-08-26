@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FaBars, FaHome, FaTimes, FaUser } from 'react-icons/fa';
-import { FaBarsStaggered } from 'react-icons/fa6';
-import { GrProjects } from 'react-icons/gr';
+import { FaBars, FaHome, FaRegQuestionCircle, FaTimes, FaUsers } from 'react-icons/fa';
+import { MdAssistant } from 'react-icons/md';
+import { RiOrganizationChart } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -38,7 +38,7 @@ const Sidebar = () => {
       >
         <div className="flex flex-col items-center justify-center py-4">
           <Link to="/" className="text-3xl">
-            MCQs Admin
+            Admin
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-4">
@@ -59,7 +59,7 @@ const Sidebar = () => {
             }`}
             onClick={() => handleLinkClick('/users')}
           >
-            <GrProjects />
+            <FaUsers />
             <span>Users</span>
           </Link>
           <Link
@@ -69,8 +69,18 @@ const Sidebar = () => {
             }`}
             onClick={() => handleLinkClick('/questions')}
           >
-            <FaBarsStaggered />
+            <FaRegQuestionCircle />
             <span>Questions Setting</span>
+          </Link>
+          <Link
+            to="/organization"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/organization' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/organization')}
+          >
+            <RiOrganizationChart />
+            <span>Organization</span>
           </Link>
           <Link
             to="/aiassistant"
@@ -79,8 +89,8 @@ const Sidebar = () => {
             }`}
             onClick={() => handleLinkClick('/aiassistant')}
           >
-            <FaUser />
-            <span>About</span>
+            <MdAssistant />
+            <span>Ai Assistant</span>
           </Link>
         </nav>
       </div>

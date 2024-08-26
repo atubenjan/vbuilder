@@ -6,12 +6,14 @@ import DashboardSummary from '../components/DashboardSummary';
 
 const Dashboard = () => {
   return (
-    <div className="w-full space-y-4 text-white">
-      <div className="w-full h-full text-black bg-white">
+    <div className="flex flex-col w-full min-h-screen">
+      {/* Main content area */}
+      <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Dashboard" showSearch={false} image={profile} />
+        <DashboardSummary />
       </div>
-      <DashboardSummary />
-
+      
+      {/* Footer */}
       <div className="w-full">
         <Footer />
       </div>
