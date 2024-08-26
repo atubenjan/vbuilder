@@ -2,31 +2,24 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useProjects } from '../contexts/ProjectContext';
 
-const AddQuestionToCourseModal = ({
-  isOpen,
-  onClose,
-  course,
-  onAddQuestionToCourse,
-}) => {
-  const { questions } = useProjects();
-  const [selectedQuestion, setSelectedQuestion] = useState('');
+const AddQuestionToCourseModal = ({ isOpen, onClose, courseId }) => {
+  const { questions, addQuestionToCourse } = useProjects(); // Assuming `questions` is provided
+  const [selectedQuestionId, setSelectedQuestionId] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedQuestion) {
-      // Pass the selected question text to onAddQuestionToCourse
-      onAddQuestionToCourse(selectedQuestion);
-      setSelectedQuestion('');
-      onClose();
+    const questionToAdd = questions.find((q) => q.id === selectedQuestionId);
+    if (questionToAdd) {
+      addQuestionToCourse(courseId, questionToAdd);
+      setSelectedQuestionId(''); // Clear the selection
+      onClose(); // Close the modal after submission
     }
   };
 
   return isOpen ? (
-    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto bg-gray-700 bg-opacity-50">
-      <div className="w-full max-w-md p-6 mt-12 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-4 text-2xl font-bold">
-          Add Question to {course.name}
-        </h2>
+    <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-700 bg-opacity-50">
+      <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+        <h2 className="mb-4 text-2xl font-bold">Add Question to Course</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block mb-2 text-gray-700" htmlFor="question">
@@ -34,17 +27,17 @@ const AddQuestionToCourseModal = ({
             </label>
             <select
               id="question"
-              value={selectedQuestion}
-              onChange={(e) => setSelectedQuestion(e.target.value)}
+              value={selectedQuestionId}
+              onChange={(e) => setSelectedQuestionId(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
               required
             >
               <option value="" disabled>
                 Select a question
               </option>
-              {questions.map((question, index) => (
-                <option key={index} value={question.text}>
-                  {question.text}
+              {questions.map((question) => (
+                <option key={question.id} value={question.id}>
+                  {question.question}
                 </option>
               ))}
             </select>
@@ -73,8 +66,7 @@ const AddQuestionToCourseModal = ({
 AddQuestionToCourseModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  course: PropTypes.object.isRequired,
-  onAddQuestionToCourse: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default AddQuestionToCourseModal;

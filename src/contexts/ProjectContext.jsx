@@ -1,6 +1,6 @@
-// src/contexts/ProjectContext.js
 import React, { createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid'; // Install this package for unique IDs
 
 const ProjectContext = createContext();
 
@@ -10,33 +10,36 @@ export const ProjectProvider = ({ children }) => {
   const [organizations, setOrganizations] = useState([]);
   const [courses, setCourses] = useState([]);
 
-  const addQuestion = (questionData) => {
-    setQuestions((prevQuestions) => [...prevQuestions, questionData]);
+  // Function to add a question with all necessary details
+  const addQuestion = (question, answers, correctAnswer) => {
+    const newQuestion = {
+      id: uuidv4(),
+      question,
+      answers, // array of possible answers
+      correctAnswer // the correct answer
+    };
+    setQuestions((prevQuestions) => [...prevQuestions, newQuestion]);
   };
 
-  const addUser = (userData) => {
-    setUsers((prevUsers) => [...prevUsers, userData]);
+  // Function to add a new course
+  const addCourse = (courseName) => {
+    const newCourse = {
+      id: uuidv4(),
+      courseName,
+      questions: [] // Start with no questions initially
+    };
+    setCourses((prevCourses) => [...prevCourses, newCourse]);
   };
 
-  const addOrganization = (organizationData) => {
-    setOrganizations((prevOrganizations) => [
-      ...prevOrganizations,
-      organizationData,
-    ]);
-  };
-
-  const addCourse = (courseData) => {
-    setCourses((prevCourses) => [...prevCourses, courseData]);
-  };
-
-  const addQuestionToCourse = (courseName, questionText) => {
-    setCourses((prevCourses) => {
-      return prevCourses.map((course) =>
-        course.name === courseName
-          ? { ...course, questions: [...course.questions, questionText] }
-          : course,
-      );
-    });
+  // Function to add a question to a specific course
+  const addQuestionToCourse = (courseId, question) => {
+    setCourses((prevCourses) =>
+      prevCourses.map((course) =>
+        course.id === courseId
+          ? { ...course, questions: [...course.questions, question] }
+          : course
+      )
+    );
   };
 
   return (
@@ -47,8 +50,12 @@ export const ProjectProvider = ({ children }) => {
         organizations,
         courses,
         addQuestion,
-        addUser,
-        addOrganization,
+        addUser: (userData) => setUsers((prevUsers) => [...prevUsers, userData]),
+        addOrganization: (organizationData) =>
+          setOrganizations((prevOrganizations) => [
+            ...prevOrganizations,
+            organizationData,
+          ]),
         addCourse,
         addQuestionToCourse,
       }}

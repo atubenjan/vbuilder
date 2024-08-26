@@ -1,10 +1,9 @@
-// src/components/AddQuestionModal.js
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useProjects } from '../contexts/ProjectContext';
 
 const AddQuestionModal = ({ isOpen, onClose }) => {
-  const [question, setQuestion] = useState('');
+  const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctAnswer, setCorrectAnswer] = useState('');
   const { addQuestion } = useProjects();
@@ -17,11 +16,16 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const questionData = { text: question, options, correctAnswer };
+    const questionData = {
+      id: Date.now().toString(), // Generate a unique id
+      question: questionText,
+      answers: options.map((option) => ({ text: option })),
+      correctAnswer,
+    };
     addQuestion(questionData);
 
     // Clear form fields
-    setQuestion('');
+    setQuestionText('');
     setOptions(['', '', '', '']);
     setCorrectAnswer('');
 
@@ -41,18 +45,15 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
             <input
               id="question"
               type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+              value={questionText}
+              onChange={(e) => setQuestionText(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
               required
             />
           </div>
           {options.map((option, index) => (
             <div key={index} className="mb-4">
-              <label
-                className="block mb-2 text-gray-700"
-                htmlFor={`option${index}`}
-              >
+              <label className="block mb-2 text-gray-700" htmlFor={`option${index}`}>
                 Option {index + 1}
               </label>
               <input
