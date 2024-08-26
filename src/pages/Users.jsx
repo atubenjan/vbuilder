@@ -16,7 +16,7 @@ const Users = () => {
           <QuestionsTable />
         </div>
       </div>
-      
+
       {/* Footer */}
       <div className="w-full">
         <Footer />

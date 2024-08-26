@@ -19,7 +19,10 @@ export const ProjectProvider = ({ children }) => {
   };
 
   const addOrganization = (organizationData) => {
-    setOrganizations((prevOrganizations) => [...prevOrganizations, organizationData]);
+    setOrganizations((prevOrganizations) => [
+      ...prevOrganizations,
+      organizationData,
+    ]);
   };
 
   const addCourse = (courseData) => {
@@ -28,26 +31,28 @@ export const ProjectProvider = ({ children }) => {
 
   const addQuestionToCourse = (courseName, questionText) => {
     setCourses((prevCourses) => {
-      return prevCourses.map(course => 
-        course.name === courseName 
-          ? { ...course, questions: [...course.questions, questionText] } 
-          : course
+      return prevCourses.map((course) =>
+        course.name === courseName
+          ? { ...course, questions: [...course.questions, questionText] }
+          : course,
       );
     });
   };
 
   return (
-    <ProjectContext.Provider value={{ 
-      questions, 
-      users, 
-      organizations, 
-      courses, 
-      addQuestion, 
-      addUser, 
-      addOrganization, 
-      addCourse,
-      addQuestionToCourse 
-    }}>
+    <ProjectContext.Provider
+      value={{
+        questions,
+        users,
+        organizations,
+        courses,
+        addQuestion,
+        addUser,
+        addOrganization,
+        addCourse,
+        addQuestionToCourse,
+      }}
+    >
       {children}
     </ProjectContext.Provider>
   );

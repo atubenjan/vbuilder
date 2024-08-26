@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { FaBars, FaHome, FaRegQuestionCircle, FaTimes, FaUsers } from 'react-icons/fa';
+import {
+  FaBars,
+  FaHome,
+  FaRegQuestionCircle,
+  FaTimes,
+  FaUsers,
+} from 'react-icons/fa';
 import { MdAssistant } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
@@ -23,7 +29,9 @@ const Sidebar = () => {
       <div className="relative">
         <button
           className={`absolute z-50 text-xl rounded-full bg-transparent ${
-            isOpen ? 'text-black top-6 left-[200px] border border-slate-700 bg-white p-2' : 'top-4 left-72 text-slate-700'
+            isOpen
+              ? 'text-black top-6 left-[200px] border border-slate-700 bg-white p-2'
+              : 'top-4 left-72 text-slate-700'
           } md:hidden`}
           onClick={toggleSidebar}
         >

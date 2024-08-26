@@ -12,7 +12,7 @@ const Dashboard = () => {
         <PageTitle text="Dashboard" showSearch={false} image={profile} />
         <DashboardSummary />
       </div>
-      
+
       {/* Footer */}
       <div className="w-full">
         <Footer />

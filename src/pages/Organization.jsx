@@ -1,7 +1,7 @@
-import React from "react";
-import Footer from "../components/Footer";
-import PageTitle from "../components/PageTitle";
-import profile from "../assets/profile.jpg";
+import React from 'react';
+import Footer from '../components/Footer';
+import PageTitle from '../components/PageTitle';
+import profile from '../assets/profile.jpg';
 
 const Organization = () => {
   return (

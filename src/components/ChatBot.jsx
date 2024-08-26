@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
@@ -15,17 +14,20 @@ const Chatbot = () => {
     setInput('');
 
     try {
-      const response = await axios.post('https://api.openai.com/v1/completions', {
-      model: "text-davinci-003",
-      prompt: input,
-      max_tokens: 150,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json', // Ensure the correct content type
-      }
-    });
-
+      const response = await axios.post(
+        'https://api.openai.com/v1/completions',
+        {
+          model: 'text-davinci-003',
+          prompt: input,
+          max_tokens: 150,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json', // Ensure the correct content type
+          },
+        },
+      );
 
       const botMessage = response.data.choices[0].text.trim();
       setMessages([...newMessages, { text: botMessage, sender: 'bot' }]);
@@ -38,8 +40,13 @@ const Chatbot = () => {
     <div className="flex flex-col h-full p-4 bg-gray-100 rounded-lg shadow-lg">
       <div className="flex-1 mb-4 overflow-y-auto">
         {messages.map((message, index) => (
-          <div key={index} className={`mb-2 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-            <span className={`inline-block p-2 rounded-lg ${message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+          <div
+            key={index}
+            className={`mb-2 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}
+          >
+            <span
+              className={`inline-block p-2 rounded-lg ${message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
+            >
               {message.text}
             </span>
           </div>

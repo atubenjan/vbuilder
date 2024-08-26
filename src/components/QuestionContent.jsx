@@ -28,12 +28,12 @@ const QuestionContent = () => {
       >
         Add Course
       </button>
-      <AddCourseModal 
-        isOpen={isCourseModalOpen} 
-        onClose={() => setIsCourseModalOpen(false)} 
-        onAddCourse={handleAddCourse} 
+      <AddCourseModal
+        isOpen={isCourseModalOpen}
+        onClose={() => setIsCourseModalOpen(false)}
+        onAddCourse={handleAddCourse}
       />
-      
+
       {courses.map((course, index) => (
         <div key={index} className="p-4 my-4 bg-white rounded shadow-md">
           <h3 className="mb-2 text-xl font-semibold">{course.name}</h3>
@@ -50,11 +50,11 @@ const QuestionContent = () => {
       ))}
 
       {selectedCourse && (
-        <AddQuestionToCourseModal 
-          isOpen={isQuestionModalOpen} 
-          onClose={() => setIsQuestionModalOpen(false)} 
+        <AddQuestionToCourseModal
+          isOpen={isQuestionModalOpen}
+          onClose={() => setIsQuestionModalOpen(false)}
           course={selectedCourse}
-          onAddQuestionToCourse={handleAddQuestionToCourse} 
+          onAddQuestionToCourse={handleAddQuestionToCourse}
         />
       )}
     </div>

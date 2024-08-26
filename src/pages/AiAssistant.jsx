@@ -1,8 +1,8 @@
-import React from "react";
-import Footer from "../components/Footer";
-import PageTitle from "../components/PageTitle";
-import profile from "../assets/profile.jpg";
-import Chatbot from "../components/ChatBot";
+import React from 'react';
+import Footer from '../components/Footer';
+import PageTitle from '../components/PageTitle';
+import profile from '../assets/profile.jpg';
+import Chatbot from '../components/ChatBot';
 
 const AiAssistant = () => {
   return (
