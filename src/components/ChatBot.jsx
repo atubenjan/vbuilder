@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -23,7 +22,7 @@ const Chatbot = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer To be filled`,
             'Content-Type': 'application/json', // Ensure the correct content type
           },
         },
