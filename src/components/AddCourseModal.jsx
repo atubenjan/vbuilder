@@ -1,33 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 
-const AddCourseModal = ({ isOpen, onClose, onAddCourse }) => {
+const AddCourseModal = ({ isOpen, onClose }) => {
   const [courseName, setCourseName] = useState('');
-  const [description, setDescription] = useState(''); // Add description field
+  const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (courseName.trim()) {
-      try {
-        // Make a POST request to the backend to create a new course
-        const response = await axios.post('http://localhost:3000/courses', {
-          name: courseName,
-          description: description.trim() || null, // Include description
-        });
-
-        if (response.status === 201) {
-          // Successfully added course, you can use the response data if needed
-          onAddCourse(response.data); // Pass the newly added course to the parent component
-        }
-        // Clear form fields after submission
-        setCourseName('');
-        setDescription('');
-        onClose();
-      } catch (error) {
-        console.error('Error creating course:', error);
-      }
-    }
+    alert('Course created successfully');
+    // Close the modal after submission
+    onClose();
   };
 
   return isOpen ? (

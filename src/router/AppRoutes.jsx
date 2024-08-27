@@ -23,6 +23,7 @@ const AppRoutes = () => {
               <Route path="/questions" element={<QuestionsSetting />} />
               <Route path="/aiassistant" element={<AiAssistant />} />
               <Route path="/organization" element={<Organization />}>
+                <Route index element={<MCQPage />} />
                 <Route path="mcq" element={<MCQPage />} />
                 <Route path="truefalse" element={<TrueFalsePage />} />
               </Route>
