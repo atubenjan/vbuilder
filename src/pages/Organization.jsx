@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 import PageTitle from '../components/PageTitle';
 import profile from '../assets/profile.jpg';
@@ -6,14 +6,16 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const Organization = () => {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState(
-    location.pathname.split('/').pop() || 'mcq',
-  );
+  const [activeTab, setActiveTab] = useState('mcq');
 
-  // Update active tab based on location changes
-  React.useEffect(() => {
-    setActiveTab(location.pathname.split('/').pop() || 'mcq');
-  }, [location]);
+  useEffect(() => {
+    const path = location.pathname.split('/').pop();
+    if (path === 'truefalse' || path === 'mcq') {
+      setActiveTab(path);
+    } else {
+      setActiveTab('mcq'); // Default tab
+    }
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">

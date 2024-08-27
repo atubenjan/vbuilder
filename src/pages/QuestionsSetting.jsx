@@ -2,7 +2,7 @@ import React from 'react';
 import profile from '../assets/profile.jpg';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
-import CourseContent from '../components/CourseContent';
+import QuestionSetting from '../components/QuestionSetting';
 
 const QuestionsSetting = () => {
   return (
@@ -14,7 +14,7 @@ const QuestionsSetting = () => {
           image={profile}
           showSearch={false}
         />
-        <CourseContent />
+        <QuestionSetting />
       </div>
 
       {/* Footer */}
