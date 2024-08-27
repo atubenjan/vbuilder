@@ -14,6 +14,9 @@ const AddCourseToQuestionModal = ({ isOpen, onClose, question }) => {
     }
   };
 
+  // Ensure question is not null before rendering the modal
+  if (!question) return null;
+
   return isOpen ? (
     <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto bg-gray-700 bg-opacity-50">
       <div className="w-full max-w-md p-6 mt-12 bg-white rounded-lg shadow-lg">
@@ -30,7 +33,9 @@ const AddCourseToQuestionModal = ({ isOpen, onClose, question }) => {
               className="w-full p-2 border border-gray-300 rounded"
               required
             >
-              <option value="" disabled>Select a course</option>
+              <option value="" disabled>
+                Select a course
+              </option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.name}
@@ -62,7 +67,7 @@ const AddCourseToQuestionModal = ({ isOpen, onClose, question }) => {
 AddCourseToQuestionModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  question: PropTypes.object.isRequired,
+  question: PropTypes.object,
 };
 
 export default AddCourseToQuestionModal;

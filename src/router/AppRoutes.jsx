@@ -7,6 +7,8 @@ import AiAssistant from '../pages/AiAssistant';
 import QuestionsSetting from '../pages/QuestionsSetting';
 import { ProjectProvider } from '../contexts/ProjectContext';
 import Organization from '../pages/Organization';
+import MCQPage from '../components/MCQPage';
+import TrueFalsePage from '../components/TrueFalsePage';
 
 const AppRoutes = () => {
   return (
@@ -20,7 +22,10 @@ const AppRoutes = () => {
               <Route path="/users" element={<Users />} />
               <Route path="/questions" element={<QuestionsSetting />} />
               <Route path="/aiassistant" element={<AiAssistant />} />
-              <Route path="/organization" element={<Organization />} />
+              <Route path="/organization" element={<Organization />}>
+                <Route path="mcq" element={<MCQPage />} />
+                <Route path="truefalse" element={<TrueFalsePage />} />
+              </Route>
             </Routes>
           </div>
         </div>

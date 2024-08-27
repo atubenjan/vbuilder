@@ -1,16 +1,32 @@
-// src/components/AddCourseModal.js
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const AddCourseModal = ({ isOpen, onClose, onAddCourse }) => {
   const [courseName, setCourseName] = useState('');
+  const [description, setDescription] = useState(''); // Add description field
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (courseName.trim()) {
-      onAddCourse(courseName);
-      setCourseName('');
-      onClose();
+      try {
+        // Make a POST request to the backend to create a new course
+        const response = await axios.post('http://localhost:3000/courses', {
+          name: courseName,
+          description: description.trim() || null, // Include description
+        });
+
+        if (response.status === 201) {
+          // Successfully added course, you can use the response data if needed
+          onAddCourse(response.data); // Pass the newly added course to the parent component
+        }
+        // Clear form fields after submission
+        setCourseName('');
+        setDescription('');
+        onClose();
+      } catch (error) {
+        console.error('Error creating course:', error);
+      }
     }
   };
 
@@ -30,6 +46,17 @@ const AddCourseModal = ({ isOpen, onClose, onAddCourse }) => {
               onChange={(e) => setCourseName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
               required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-700" htmlFor="description">
+              Course Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
             />
           </div>
           <div className="flex justify-end">

@@ -16,7 +16,7 @@ export const ProjectProvider = ({ children }) => {
       id: uuidv4(),
       question,
       answers, // array of possible answers
-      correctAnswer // the correct answer
+      correctAnswer, // the correct answer
     };
     setQuestions((prevQuestions) => [...prevQuestions, newQuestion]);
   };
@@ -26,7 +26,7 @@ export const ProjectProvider = ({ children }) => {
     const newCourse = {
       id: uuidv4(),
       courseName,
-      questions: [] // Start with no questions initially
+      questions: [], // Start with no questions initially
     };
     setCourses((prevCourses) => [...prevCourses, newCourse]);
   };
@@ -37,8 +37,8 @@ export const ProjectProvider = ({ children }) => {
       prevCourses.map((course) =>
         course.id === courseId
           ? { ...course, questions: [...course.questions, question] }
-          : course
-      )
+          : course,
+      ),
     );
   };
 
@@ -50,7 +50,8 @@ export const ProjectProvider = ({ children }) => {
         organizations,
         courses,
         addQuestion,
-        addUser: (userData) => setUsers((prevUsers) => [...prevUsers, userData]),
+        addUser: (userData) =>
+          setUsers((prevUsers) => [...prevUsers, userData]),
         addOrganization: (organizationData) =>
           setOrganizations((prevOrganizations) => [
             ...prevOrganizations,

@@ -12,13 +12,13 @@ const CourseContent = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   const handleAddCourse = (name) => {
-    addCourse({ id: Date.now(), name, questions: [] });
+    addCourse({ id: Date.now().toString(), name, questions: [] });
   };
 
   const handleAddQuestionToCourse = (question) => {
     if (selectedCourse) {
       addQuestionToCourse(selectedCourse.id, question);
-      setIsQuestionModalOpen(false); // Close the modal after adding the question
+      setIsQuestionModalOpen(false);
     }
   };
 

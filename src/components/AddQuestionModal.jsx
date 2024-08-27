@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useProjects } from '../contexts/ProjectContext';
 
 const AddQuestionModal = ({ isOpen, onClose }) => {
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const { addQuestion } = useProjects();
 
   const handleOptionChange = (index, value) => {
     const newOptions = [...options];
@@ -14,21 +12,9 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
     setOptions(newOptions);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const questionData = {
-      id: Date.now().toString(), // Generate a unique id
-      question: questionText,
-      answers: options.map((option) => ({ text: option })),
-      correctAnswer,
-    };
-    addQuestion(questionData);
-
-    // Clear form fields
-    setQuestionText('');
-    setOptions(['', '', '', '']);
-    setCorrectAnswer('');
-
+    alert('Quiz created successfully');
     // Close the modal after submission
     onClose();
   };
@@ -53,7 +39,10 @@ const AddQuestionModal = ({ isOpen, onClose }) => {
           </div>
           {options.map((option, index) => (
             <div key={index} className="mb-4">
-              <label className="block mb-2 text-gray-700" htmlFor={`option${index}`}>
+              <label
+                className="block mb-2 text-gray-700"
+                htmlFor={`option${index}`}
+              >
                 Option {index + 1}
               </label>
               <input

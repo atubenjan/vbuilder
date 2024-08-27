@@ -12,7 +12,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation(); // To get the current path
+  const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
 
   const toggleSidebar = () => {
@@ -44,7 +44,7 @@ const Sidebar = () => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:block`}
       >
-        <div className="flex flex-col items-center justify-center py-4">
+        <div className="py-4 text-center">
           <Link to="/" className="text-3xl">
             Admin
           </Link>
