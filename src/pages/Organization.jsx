@@ -22,7 +22,7 @@ const Organization = () => {
       {/* Main content area */}
       <div className="flex-grow">
         <PageTitle text="Organization" image={profile} showSearch={false} />
-        <div className="p-4">
+        <div className="p-4 pt-20">
           <div className="flex mb-4">
             <Link
               to="mcq"

@@ -58,7 +58,7 @@ const Sidebar = () => {
             onClick={() => handleLinkClick('/')}
           >
             <FaHome />
-            <span>Dashboard</span>
+            <span>Home</span>
           </Link>
           <Link
             to="/users"
@@ -89,6 +89,16 @@ const Sidebar = () => {
           >
             <RiOrganizationChart />
             <span>Organization</span>
+          </Link>
+          <Link
+            to="/analytics"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/analytics' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/analytics')}
+          >
+            <RiOrganizationChart />
+            <span>Analytics</span>
           </Link>
           <Link
             to="/aiassistant"

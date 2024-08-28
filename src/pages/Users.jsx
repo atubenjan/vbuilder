@@ -11,7 +11,7 @@ const Users = () => {
       {/* Main content */}
       <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Users" showSearch={false} image={profile} />
-        <div className="w-full p-4">
+        <div className="w-full p-4 pt-20">
           <AddQuestion />
           <QuestionsTable />
         </div>
