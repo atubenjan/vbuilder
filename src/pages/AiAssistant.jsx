@@ -10,7 +10,7 @@ const AiAssistant = () => {
       {/* Main content area */}
       <div className="flex-grow">
         <PageTitle text="Ai Assistant" image={profile} showSearch={false} />
-        <div className="px-2 md:px-4">
+        <div className="px-2 pt-20 md:px-4">
           <Chatbot />
         </div>
       </div>
