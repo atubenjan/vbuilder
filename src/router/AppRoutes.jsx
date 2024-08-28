@@ -10,6 +10,9 @@ import MCQPage from '../components/MCQPage';
 import TrueFalsePage from '../components/TrueFalsePage';
 import Home from '../pages/Home';
 import Analytics from '../pages/Analytics';
+import Subscription from '../pages/Subscription';
+import SignUp from '../pages/SignUp';
+import Login from '../pages/Login';
 
 const AppRoutes = () => {
   return (
@@ -27,8 +30,11 @@ const AppRoutes = () => {
                 <Route path="mcq" element={<MCQPage />} />
                 <Route path="truefalse" element={<TrueFalsePage />} />
               </Route>
+              <Route path="/subscription" element={<Subscription />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/aiassistant" element={<AiAssistant />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
             </Routes>
           </div>
         </div>
