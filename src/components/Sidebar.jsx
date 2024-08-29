@@ -29,12 +29,12 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-10 h-full text-white bg-gray-800 md:w-60">
+    <div className="fixed top-0 left-0 z-20 h-full text-white bg-gray-800 md:w-60">
       <div className="relative">
         <button
           className={`absolute z-50 text-xl rounded-full bg-transparent ${
             isOpen
-              ? 'text-black top-6 left-[200px] border border-slate-700 bg-white p-2'
+              ? 'text-black top-2 left-[215px] border border-slate-700 bg-white p-2'
               : 'top-4 left-72 text-slate-700'
           } md:hidden`}
           onClick={toggleSidebar}

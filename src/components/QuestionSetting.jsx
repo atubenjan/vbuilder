@@ -59,7 +59,7 @@ const QuestionSetting = () => {
   ];
 
   return (
-    <div className="p-4 pt-14">
+    <div className="p-4 pt-20">
       <div className="mb-4">
         <label className="inline-flex items-center cursor-pointer">
           <input
