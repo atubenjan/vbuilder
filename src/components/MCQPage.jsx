@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export const  sampleMCQs = [
+export const sampleMCQs = [
   {
     id: 1,
     question: 'What is the capital of France?',
