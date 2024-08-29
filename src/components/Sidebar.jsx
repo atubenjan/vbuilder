@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import {
   FaBars,
+  FaCertificate,
   FaHome,
   FaMoneyBill,
   FaRegQuestionCircle,
   FaTimes,
   FaUsers,
 } from 'react-icons/fa';
+import { IoNotificationsOutline } from 'react-icons/io5';
 import { MdAssistant, MdLogout } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
 import { TbBrandGoogleAnalytics } from 'react-icons/tb';
@@ -121,6 +123,26 @@ const Sidebar = () => {
           >
             <MdAssistant />
             <span>Ai Assistant</span>
+          </Link>
+          <Link
+            to="/certifications"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/certifications' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/certifications')}
+          >
+            <FaCertificate />
+            <span>Certifications</span>
+          </Link>
+          <Link
+            to="/notifications"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/notifications' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/notifications')}
+          >
+            <IoNotificationsOutline />
+            <span>Notifications</span>
           </Link>
           <Link
             to="/logout"

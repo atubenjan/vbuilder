@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const sampleTrueFalse = [
+export const sampleTrueFalse = [
   {
     id: 1,
     question: 'The Earth orbits the Sun.',
