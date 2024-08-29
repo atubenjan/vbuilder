@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import {
   FaBars,
   FaHome,
+  FaMoneyBill,
   FaRegQuestionCircle,
   FaTimes,
   FaUsers,
 } from 'react-icons/fa';
-import { MdAssistant } from 'react-icons/md';
+import { MdAssistant, MdLogout } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
+import { TbBrandGoogleAnalytics } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -49,9 +51,9 @@ const Sidebar = () => {
             Admin
           </Link>
         </div>
-        <nav className="flex flex-col gap-1 p-4">
+        <nav className="flex flex-col gap-1 px-4">
           <Link
-            to="/"
+            to="/home"
             className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
               activeLink === '/' ? 'bg-gray-700' : ''
             }`}
@@ -97,8 +99,18 @@ const Sidebar = () => {
             }`}
             onClick={() => handleLinkClick('/analytics')}
           >
-            <RiOrganizationChart />
+            <TbBrandGoogleAnalytics />
             <span>Analytics</span>
+          </Link>
+          <Link
+            to="/subscription"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/subscription' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/subscription')}
+          >
+            <FaMoneyBill />
+            <span>Subscription</span>
           </Link>
           <Link
             to="/aiassistant"
@@ -109,6 +121,16 @@ const Sidebar = () => {
           >
             <MdAssistant />
             <span>Ai Assistant</span>
+          </Link>
+          <Link
+            to="/logout"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/logout' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/logout')}
+          >
+            <MdLogout />
+            <span>Logout</span>
           </Link>
         </nav>
       </div>
