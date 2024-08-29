@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 const SignUp = () => {
   return (
-    <div>SignUp</div>
-  )
-}
+    <div className="flex items-center justify-center w-full h-screen">
+      <h2 className="text-4xl">Sign Up</h2>
+    </div>
+  );
+};
 
-export default SignUp
+export default SignUp;

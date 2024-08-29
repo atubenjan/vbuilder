@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import {
   FaBars,
   FaHome,
-  FaLockOpen,
   FaMoneyBill,
   FaRegQuestionCircle,
   FaTimes,
   FaUsers,
 } from 'react-icons/fa';
-import { GiArchiveRegister } from 'react-icons/gi';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { MdAssistant, MdLogout } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
 import { TbBrandGoogleAnalytics } from 'react-icons/tb';
@@ -23,10 +20,6 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
-  const toggleDropdown = ()=>{
-    setIsOpen(!isOpen)
-  }
 
   const handleLinkClick = (path) => {
     setActiveLink(path);
@@ -60,7 +53,7 @@ const Sidebar = () => {
         </div>
         <nav className="flex flex-col gap-1 px-4">
           <Link
-            to="/"
+            to="/home"
             className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
               activeLink === '/' ? 'bg-gray-700' : ''
             }`}
@@ -129,43 +122,16 @@ const Sidebar = () => {
             <MdAssistant />
             <span>Ai Assistant</span>
           </Link>
-          <div className="relative inline-block text-left">
-            <button
-              onClick={toggleDropdown}
-              className={` ${isOpen?'bg-gray-700':''}  hover:bg-gray-700 flex justify-start items-center w-full px-4 py-2 rounded-md focus:outline-none`}
-            >
-              <span className='pr-4'><GiArchiveRegister /></span> 
-              <span>Register</span>
-              <span className='pl-14'>{isOpen? <IoIosArrowUp />:<IoIosArrowDown />}</span>
-            </button>
-
-            {isOpen && (
-              <div className="absolute right-0 z-10 w-full mt-2 origin-top-right divide-y rounded-md">
-                <div className="py-1">
-                  <Link
-                    to="/signup"
-                    className={`flex items-center gap-4 px-4 py-2 my-1 rounded-md hover:bg-gray-700 ${
-                      activeLink === '/signup' ? 'bg-gray-700' : ''
-                    }`}
-                    onClick={() => handleLinkClick('/signup')}
-                  >
-                    <MdLogout />
-                    <span>Signup</span>
-                  </Link>
-                  <Link
-                    to="/login"
-                    className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                      activeLink === '/login' ? 'bg-gray-700' : ''
-                    }`}
-                    onClick={() => handleLinkClick('/login')}
-                  >
-                    <FaLockOpen />
-                    <span>Login</span>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
+          <Link
+            to="/logout"
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+              activeLink === '/logout' ? 'bg-gray-700' : ''
+            }`}
+            onClick={() => handleLinkClick('/logout')}
+          >
+            <MdLogout />
+            <span>Logout</span>
+          </Link>
         </nav>
       </div>
     </div>
