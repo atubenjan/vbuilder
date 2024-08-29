@@ -2,7 +2,7 @@ import React from 'react';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
 import profile from '../assets/profile.jpg';
-import LandingPage from '../components/LandingPage';
+import HomePage from '../components/HomePage';
 
 const Home = () => {
   return (
@@ -10,7 +10,7 @@ const Home = () => {
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-slate-200">
         <PageTitle text="Home" showSearch={false} image={profile} />
-        <LandingPage />
+        <HomePage />
       </div>
 
       {/* Footer */}
