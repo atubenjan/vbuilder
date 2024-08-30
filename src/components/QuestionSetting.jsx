@@ -1,180 +1,207 @@
 import React, { useState } from 'react';
 
 const QuestionSetting = () => {
+  const [showToggles, setShowToggles] = useState(false);
   const [showMCQ, setShowMCQ] = useState(false);
   const [showTrueFalse, setShowTrueFalse] = useState(false);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [selectedQuestions, setSelectedQuestions] = useState({});
-
-  const handleMCQToggle = () => {
-    setShowMCQ(!showMCQ);
-  };
-
-  const handleTrueFalseToggle = () => {
-    setShowTrueFalse(!showTrueFalse);
-  };
-
-  const handleOptionChange = (questionId, option) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
-      [questionId]: option,
-    });
-  };
-
-  const handleToggleQuestion = (questionId) => {
-    setSelectedQuestions((prev) => ({
-      ...prev,
-      [questionId]: !prev[questionId],
-    }));
-  };
-
-  const isQuestionSelected = (questionId) => !!selectedQuestions[questionId];
-
-  const mcqQuestions = [
-    {
-      id: 1,
-      question: 'What is the capital of France?',
-      options: ['Berlin', 'Madrid', 'Paris', 'Rome'],
-      correctAnswer: 'Paris',
-    },
-    {
-      id: 2,
-      question: 'Which planet is known as the Red Planet?',
-      options: ['Earth', 'Mars', 'Jupiter', 'Saturn'],
-      correctAnswer: 'Mars',
-    },
-  ];
-
-  const trueFalseQuestions = [
-    {
-      id: 1,
-      question: 'The Earth is flat.',
-      correctAnswer: 'False',
-    },
-    {
-      id: 2,
-      question: 'Water freezes at 0°C.',
-      correctAnswer: 'True',
-    },
-  ];
+  const [showShortAnswers, setShowShortAnswers] = useState(false);
+  const [showFillInTheBlank, setShowFillInTheBlank] = useState(false);
+  const [showMarchingPairs, setShowMarchingPairs] = useState(false);
+  const [showEssayQuestions, setShowEssayQuestions] = useState(false);
+  const [showDragnDrop, setShowDragnDrop] = useState(false);
+  const [showPuzzles, setShowPuzzles] = useState(false);
+  const [showSimulations, setShowSimulations] = useState(false);
+  const [showPeerReviewAssignments, setShowPeerReviewAssignments] =
+    useState(false);
+  const [showCaseStudies, setShowCaseStudies] = useState(false);
+  const [showProjectBasedAssignments, setShowProjectBasedAssignments] =
+    useState(false);
 
   return (
     <div className="p-4 pt-20">
-      <div className="mb-4">
-        <label className="inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={showMCQ}
-            onChange={handleMCQToggle}
-          />
-          <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-          <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
-            MCQ
-          </span>
-        </label>
-      </div>
+      <h2 className="pb-4 text-lg font-semibold">Activate Question Type</h2>
+      <button
+        onClick={() => setShowToggles(!showToggles)}
+        className="px-4 py-2 mb-4 bg-slate-700 hover:bg-slate-400 hover:text-black text-white rounded-md"
+      >
+        {showToggles ? 'Hide Question Types' : 'Activate Question Type'}
+      </button>
 
-      <div className="mb-4">
-        <label className="inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={showTrueFalse}
-            onChange={handleTrueFalseToggle}
-          />
-          <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-          <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
-            True/False
-          </span>
-        </label>
-      </div>
+      {showToggles && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showMCQ}
+                onChange={() => setShowMCQ(!showMCQ)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                MCQ
+              </span>
+            </label>
+          </div>
 
-      {showMCQ && (
-        <div>
-          <h2 className="mb-4 text-xl font-semibold">
-            Multiple Choice Questions
-          </h2>
-          <ul>
-            {mcqQuestions.map((q) => (
-              <li
-                key={q.id}
-                className={`p-1 mb-1 ${isQuestionSelected(q.id) ? 'bg-gray-100' : ''}`}
-              >
-                <div className="flex items-center mb-1">
-                  <button
-                    onClick={() => handleToggleQuestion(q.id)}
-                    className={`px-2 py-1 mr-2 rounded ${isQuestionSelected(q.id) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    {isQuestionSelected(q.id) ? 'Deselect' : 'Select'}
-                  </button>
-                  <div className="font-semibold">{q.question}</div>
-                </div>
-                {isQuestionSelected(q.id) && (
-                  <ul className="mt-2">
-                    {q.options.map((option, index) => (
-                      <li key={index} className="mt-1">
-                        <label>
-                          <input
-                            type="radio"
-                            name={`question-${q.id}`}
-                            value={option}
-                            checked={selectedAnswers[q.id] === option}
-                            onChange={() => handleOptionChange(q.id, option)}
-                            className="mr-2"
-                          />
-                          {option}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {showTrueFalse && (
-        <div>
-          <h2 className="mb-4 text-xl font-semibold">True/False Questions</h2>
-          <ul>
-            {trueFalseQuestions.map((q) => (
-              <li
-                key={q.id}
-                className={`p-1 mb-1 ${isQuestionSelected(q.id) ? 'bg-gray-100' : ''}`}
-              >
-                <div className="flex items-center mb-2">
-                  <button
-                    onClick={() => handleToggleQuestion(q.id)}
-                    className={`px-2 py-1 mr-2 rounded ${isQuestionSelected(q.id) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  >
-                    {isQuestionSelected(q.id) ? 'Deselect' : 'Select'}
-                  </button>
-                  <div className="font-semibold">{q.question}</div>
-                </div>
-                {isQuestionSelected(q.id) && (
-                  <ul className="mt-2">
-                    {['True', 'False'].map((option, index) => (
-                      <li key={index} className="mt-1">
-                        <label>
-                          <input
-                            type="radio"
-                            name={`question-${q.id}`}
-                            value={option}
-                            checked={selectedAnswers[q.id] === option}
-                            onChange={() => handleOptionChange(q.id, option)}
-                            className="mr-2"
-                          />
-                          {option}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showTrueFalse}
+                onChange={() => setShowTrueFalse(!showTrueFalse)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                True/False
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showShortAnswers}
+                onChange={() => setShowShortAnswers(!showShortAnswers)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Short Answers
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showFillInTheBlank}
+                onChange={() => setShowFillInTheBlank(!showFillInTheBlank)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Fill In The Blanks
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showMarchingPairs}
+                onChange={() => setShowMarchingPairs(!showMarchingPairs)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Matching Pairs
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showEssayQuestions}
+                onChange={() => setShowEssayQuestions(!showEssayQuestions)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Essay Questions
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showDragnDrop}
+                onChange={() => setShowDragnDrop(!showDragnDrop)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Essay Questions
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showPuzzles}
+                onChange={() => setShowPuzzles(!showPuzzles)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Crosswords and Puzzles
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showSimulations}
+                onChange={() => setShowSimulations(!showSimulations)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Interactive Simulations
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showPeerReviewAssignments}
+                onChange={() =>
+                  setShowPeerReviewAssignments(!showPeerReviewAssignments)
+                }
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Peer Review Assignments
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showCaseStudies}
+                onChange={() => setShowCaseStudies(!showCaseStudies)}
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Case Studies
+              </span>
+            </label>
+          </div>
+          <div className="mb-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showProjectBasedAssignments}
+                onChange={() =>
+                  setShowProjectBasedAssignments(!showProjectBasedAssignments)
+                }
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-700 dark:peer-focus:ring-slate-700 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-700 peer-checked:bg-slate-700"></div>
+              <span className="text-sm font-medium text-gray-900 ms-3 dark:text-gray-300">
+                Project-Based Assignments
+              </span>
+            </label>
+          </div>
         </div>
       )}
     </div>

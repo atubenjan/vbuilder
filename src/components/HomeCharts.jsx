@@ -21,9 +21,9 @@ const xLabels = [
 const HomeCharts = () => {
   return (
     <div className="px-2 pb-10 md:px-4">
-      <h1>Summary</h1>
+      <h1 className="text-lg font-bold">Analytics</h1>
       <div className="items-center justify-between block w-full h-auto grid-cols-1 gap-2 lg:grid lg:grid-cols-2">
-        <div className="pt-2 pl-2 my-2 bg-white border rounded-lg w-fit h-fit border-slate-600">
+        <div className="pt-2 pl-2 mt-3 bg-white border rounded-lg w-fit h-fit border-slate-600">
           <h2>Users Vs Organization</h2>
           <LineChart
             width={window.innerWidth > 768 ? 450 : 300}
@@ -36,7 +36,7 @@ const HomeCharts = () => {
             grid={{ vertical: true, horizontal: true }}
           />
         </div>
-        <div className="pt-2 pl-2 bg-white border rounded-lg w-fit h-fit border-slate-600">
+        <div className="pt-2 pl-2 my-3 bg-white border rounded-lg w-fit h-fit border-slate-600">
           <h2>Total Quiz</h2>
           <LineChart
             width={window.innerWidth > 768 ? 450 : 300}

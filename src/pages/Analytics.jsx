@@ -1,16 +1,17 @@
 import React from 'react';
 import PageTitle from '../components/PageTitle';
-import profile from '../assets/profile.jpg';
 import Footer from '../components/Footer';
-import DashboardSummary from '../components/DashboardSummary';
+import HomeCharts from '../components/HomeCharts';
 
 const Analytics = () => {
   return (
     <div className="flex flex-col w-full min-h-screen">
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-white">
-        <PageTitle text="Analytics" showSearch={false} image={profile} />
-        <DashboardSummary />
+        <PageTitle text="Analytics" />
+        <div className="w-full pt-20 px-2 md:px-4">
+          <HomeCharts />
+        </div>
       </div>
 
       {/* Footer */}
