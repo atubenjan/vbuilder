@@ -2,6 +2,7 @@ import React from 'react';
 import PageTitle from '../components/PageTitle';
 import profile from '../assets/profile.jpg';
 import Footer from '../components/Footer';
+import SubscriptionCardContainer from '../components/SubscriptionCardContainer';
 
 const Subscription = () => {
   return (
@@ -10,7 +11,7 @@ const Subscription = () => {
       <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Subscription" showSearch={false} image={profile} />
         <div className="px-2 pt-20 md:px-4">
-          <h2>Subscription</h2>
+          <SubscriptionCardContainer />
         </div>
       </div>
 
