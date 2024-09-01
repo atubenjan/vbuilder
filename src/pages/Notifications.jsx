@@ -1,6 +1,7 @@
 import React from 'react';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
+import Notification from '../components/Notification';
 
 const Notifications = () => {
   return (
@@ -8,8 +9,8 @@ const Notifications = () => {
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-slate-200">
         <PageTitle text="Notifications" />
-        <div className="w-full h-[80vh] flex justify-center items-center">
-          <h2>Notifications</h2>
+        <div className="w-full h-full pt-14">
+          <Notification />
         </div>
       </div>
 
