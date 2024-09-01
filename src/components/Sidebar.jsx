@@ -35,7 +35,7 @@ const Sidebar = () => {
           className={`absolute z-50 text-xl rounded-full bg-transparent ${
             isOpen
               ? 'text-black top-2 left-[215px] border border-slate-700 bg-white p-2'
-              : 'top-4 left-72 text-slate-700'
+              : 'top-4 left-72 text-white'
           } md:hidden`}
           onClick={toggleSidebar}
         >
@@ -48,7 +48,7 @@ const Sidebar = () => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:block`}
       >
-        <div className="py-4 text-center">
+        <div className="py-4 pl-8 text-left">
           <Link to="/" className="text-3xl">
             Admin
           </Link>
