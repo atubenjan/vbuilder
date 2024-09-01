@@ -57,19 +57,22 @@ const tags = ['All Notifications', 'Unread', 'Read'];
 
 const Notification = () => {
   const [notifications, setNotifications] = useState(
-    initialNotifications.map((notif) => ({ ...notif, tags: ['Unread','New'] }))
+    initialNotifications.map((notif) => ({
+      ...notif,
+      tags: ['Unread', 'New'],
+    })),
   );
   const [selectedTag, setSelectedTag] = useState('All Notifications');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNotification, setCurrentNotification] = useState(null);
 
   const handleNotificationClick = (id) => {
-    const updatedNotifications = notifications.map(notification => {
+    const updatedNotifications = notifications.map((notification) => {
       if (notification.id === id && notification.tags.includes('Unread')) {
         return {
           ...notification,
-          tags: ['Read', 'Old'], 
-          tagColors: ['bg-gray-200 text-gray-800'], 
+          tags: ['Read', 'Old'],
+          tagColors: ['bg-gray-200 text-gray-800'],
         };
       }
       return notification;
@@ -85,14 +88,17 @@ const Notification = () => {
     setIsModalOpen(false);
   };
 
-  const filteredNotifications = selectedTag === 'All Notifications' 
-    ? notifications 
-    : notifications.filter(notification => notification.tags.includes(selectedTag));
+  const filteredNotifications =
+    selectedTag === 'All Notifications'
+      ? notifications
+      : notifications.filter((notification) =>
+          notification.tags.includes(selectedTag),
+        );
 
   return (
     <div className="w-full bg-white">
-      <h2 className='pl-4 pt-4 text-xl font-semibold'>All Notifications</h2>
-      <div className='w-full border-b p-4 border-gray-300'>
+      <h2 className="pl-4 pt-4 text-xl font-semibold">All Notifications</h2>
+      <div className="w-full border-b p-4 border-gray-300">
         <div className="border w-full md:w-1/2 rounded-lg border-gray-200 p-2">
           <select
             id="filter"
@@ -100,8 +106,10 @@ const Notification = () => {
             onChange={(e) => setSelectedTag(e.target.value)}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
-            {tags.map(tag => (
-              <option key={tag} value={tag}>{tag}</option>
+            {tags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
             ))}
           </select>
         </div>
@@ -125,7 +133,9 @@ const Notification = () => {
                   <h4 className="text-sm font-medium">
                     {notification.name || notification.title}
                   </h4>
-                  <span className="text-xs text-gray-500">{notification.time}</span>
+                  <span className="text-xs text-gray-500">
+                    {notification.time}
+                  </span>
                 </div>
                 <p className="text-sm text-gray-600">{notification.message}</p>
                 {notification.tags && (
@@ -148,7 +158,10 @@ const Notification = () => {
                 {notification.files && (
                   <div className="mt-2 w-fit px-4">
                     {notification.files.map((file, index) => (
-                      <div key={index} className="bg-gray-200 p-2 rounded-md flex items-center space-x-2">
+                      <div
+                        key={index}
+                        className="bg-gray-200 p-2 rounded-md flex items-center space-x-2"
+                      >
                         <span className="text-sm font-medium">{file}</span>
                       </div>
                     ))}
@@ -164,7 +177,9 @@ const Notification = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-11/12">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">{currentNotification.name || currentNotification.title}</h2>
+              <h2 className="text-lg font-semibold">
+                {currentNotification.name || currentNotification.title}
+              </h2>
               <button
                 className="text-gray-500 hover:text-gray-700"
                 onClick={closeModal}
