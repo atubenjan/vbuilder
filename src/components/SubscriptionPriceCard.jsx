@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 const SubscriptionPriceCard = ({ card }) => {
   return (
     <div className={`card ${card.cardStyle} p-4 border rounded-lg shadow-md`}>
-      <h2 className="text-xl font-semibold mb-4">{card.plan}</h2>
-      <p className="text-2xl font-bold mb-4">${card.price}/month</p>
+      <h2 className="mb-4 text-xl font-semibold">{card.plan}</h2>
+      <p className="mb-4 text-2xl font-bold">${card.price}/month</p>
       <ul className="mb-4">
         {card.features.map((feature, index) => (
           <li
@@ -17,7 +17,7 @@ const SubscriptionPriceCard = ({ card }) => {
           </li>
         ))}
       </ul>
-      <button className="px-4 py-2 bg-slate-800 hover:bg-slate-400 hover:text-black text-white rounded-md">
+      <button className="px-4 py-2 text-white rounded-md bg-slate-800 hover:bg-slate-400 hover:text-black">
         Subscribe
       </button>
     </div>
