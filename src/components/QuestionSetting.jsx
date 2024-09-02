@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import AddQuestionAccordion from './AddQuestionAccordion';
 
 const QuestionSetting = () => {
-  const [showToggles, setShowToggles] = useState(false);
+  const [activeTab, setActiveTab] = useState('questionTypes');
   const [showMCQ, setShowMCQ] = useState(false);
   const [showTrueFalse, setShowTrueFalse] = useState(false);
   const [showShortAnswers, setShowShortAnswers] = useState(false);
@@ -16,18 +17,58 @@ const QuestionSetting = () => {
   const [showCaseStudies, setShowCaseStudies] = useState(false);
   const [showProjectBasedAssignments, setShowProjectBasedAssignments] =
     useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadedFile(file);
+    }
+  };
+
+  const handleFileDownload = () => {
+    if (uploadedFile) {
+      const fileURL = URL.createObjectURL(uploadedFile);
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = uploadedFile.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   return (
     <div className="p-4 pt-20">
-      <h2 className="pb-4 text-lg font-semibold">Activate Question Type</h2>
-      <button
-        onClick={() => setShowToggles(!showToggles)}
-        className="px-4 py-2 mb-4 bg-slate-700 hover:bg-slate-400 hover:text-black text-white rounded-md"
-      >
-        {showToggles ? 'Hide Question Types' : 'Activate Question Type'}
-      </button>
+      <h2 className="pb-4 text-lg font-semibold">Question Settings</h2>
+      <div className="items-center justify-start block gap-3 pb-3 mb-4 border-b-2 border-gray-200 sm:flex">
+        <div className="pb-2">
+          <button
+            onClick={() => setActiveTab('questionTypes')}
+            className={`px-4 py-2 rounded-md ${activeTab === 'questionTypes' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+          >
+            Activate Question Type
+          </button>
+        </div>
+        <div className="pb-2">
+          <button
+            onClick={() => setActiveTab('uploadFile')}
+            className={`px-4 py-2 rounded-md ${activeTab === 'uploadFile' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+          >
+            Upload File
+          </button>
+        </div>
+        <div className="pb-2">
+          <button
+            onClick={() => setActiveTab('addQuestion')}
+            className={`px-4 py-2 rounded-md ${activeTab === 'addQuestion' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+          >
+            Add Questions
+          </button>
+        </div>
+      </div>
 
-      {showToggles && (
+      {activeTab === 'questionTypes' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <div className="mb-4">
             <label className="inline-flex items-center cursor-pointer">
@@ -204,6 +245,33 @@ const QuestionSetting = () => {
           </div>
         </div>
       )}
+
+      {activeTab === 'uploadFile' && (
+        <div className="mt-4">
+          <input
+            type="file"
+            accept=".pdf, .xlsx, .xls, .docx"
+            onChange={handleFileUpload}
+            className="hidden"
+            id="fileUpload"
+          />
+          <label
+            htmlFor="fileUpload"
+            className="px-4 py-2 mb-4 text-white rounded-md cursor-pointer bg-slate-700 hover:bg-slate-400 hover:text-black"
+          >
+            Upload notes
+          </label>
+          <button
+            onClick={handleFileDownload}
+            disabled={!uploadedFile}
+            className="px-4 py-2 mb-4 ml-2 text-white rounded-md bg-slate-700 hover:bg-slate-400 hover:text-black"
+          >
+            Download notes
+          </button>
+        </div>
+      )}
+
+      {activeTab === 'addQuestion' && <AddQuestionAccordion />}
     </div>
   );
 };
