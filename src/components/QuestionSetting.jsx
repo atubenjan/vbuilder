@@ -12,9 +12,11 @@ const QuestionSetting = () => {
   const [showDragnDrop, setShowDragnDrop] = useState(false);
   const [showPuzzles, setShowPuzzles] = useState(false);
   const [showSimulations, setShowSimulations] = useState(false);
-  const [showPeerReviewAssignments, setShowPeerReviewAssignments] = useState(false);
+  const [showPeerReviewAssignments, setShowPeerReviewAssignments] =
+    useState(false);
   const [showCaseStudies, setShowCaseStudies] = useState(false);
-  const [showProjectBasedAssignments, setShowProjectBasedAssignments] = useState(false);
+  const [showProjectBasedAssignments, setShowProjectBasedAssignments] =
+    useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const handleFileUpload = (e) => {
@@ -40,7 +42,7 @@ const QuestionSetting = () => {
     <div className="p-4 pt-20">
       <h2 className="pb-4 text-lg font-semibold">Question Settings</h2>
       <div className="items-center justify-start block gap-3 pb-3 mb-4 border-b-2 border-gray-200 sm:flex">
-        <div className='pb-2'>
+        <div className="pb-2">
           <button
             onClick={() => setActiveTab('questionTypes')}
             className={`px-4 py-2 rounded-md ${activeTab === 'questionTypes' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
@@ -48,7 +50,7 @@ const QuestionSetting = () => {
             Activate Question Type
           </button>
         </div>
-        <div className='pb-2'>
+        <div className="pb-2">
           <button
             onClick={() => setActiveTab('uploadFile')}
             className={`px-4 py-2 rounded-md ${activeTab === 'uploadFile' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
@@ -56,7 +58,7 @@ const QuestionSetting = () => {
             Upload File
           </button>
         </div>
-        <div className='pb-2'>
+        <div className="pb-2">
           <button
             onClick={() => setActiveTab('addQuestion')}
             className={`px-4 py-2 rounded-md ${activeTab === 'addQuestion' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
@@ -269,9 +271,7 @@ const QuestionSetting = () => {
         </div>
       )}
 
-      {activeTab === 'addQuestion' && (
-          <AddQuestionAccordion />
-      )}
+      {activeTab === 'addQuestion' && <AddQuestionAccordion />}
     </div>
   );
 };

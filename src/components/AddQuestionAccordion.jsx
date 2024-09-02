@@ -38,13 +38,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 1 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Options:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Options:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -95,13 +99,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 2 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Options:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Options:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -157,13 +165,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 3 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Answer:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Answer:
+              </label>
               <select className="w-full p-2 mb-4 border border-gray-300 rounded-md">
                 <option>True</option>
                 <option>False</option>
@@ -208,7 +220,9 @@ const AddQuestionAccordion = () => {
         {openAccordion === 4 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -254,13 +268,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 5 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Correct Answer:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Correct Answer:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -308,13 +326,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 6 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Options:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Options:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -370,7 +392,9 @@ const AddQuestionAccordion = () => {
         {openAccordion === 7 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -416,13 +440,17 @@ const AddQuestionAccordion = () => {
         {openAccordion === 8 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
                 placeholder="Enter your question"
               />
-              <label className="block mb-2 text-sm font-medium text-gray-900">Options:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Options:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -473,7 +501,9 @@ const AddQuestionAccordion = () => {
         {openAccordion === 9 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
@@ -519,7 +549,9 @@ const AddQuestionAccordion = () => {
         {openAccordion === 10 && (
           <div className="p-5 border border-b-0 border-gray-200">
             <form>
-              <label className="block mb-2 text-sm font-medium text-gray-900">Question:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900">
+                Question:
+              </label>
               <input
                 type="text"
                 className="w-full p-2 mb-4 border border-gray-300 rounded-md"
