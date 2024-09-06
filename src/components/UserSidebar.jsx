@@ -11,10 +11,9 @@ import {
 import { IoNotificationsOutline } from 'react-icons/io5';
 import { MdAssistant, MdLogout } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
-import { TbBrandGoogleAnalytics } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 
-const Sidebar = () => {
+const UserSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
@@ -94,16 +93,7 @@ const Sidebar = () => {
             <RiOrganizationChart />
             <span>Organization</span>
           </Link>
-          <Link
-            to="/analytics"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/analytics' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/analytics')}
-          >
-            <TbBrandGoogleAnalytics />
-            <span>Analytics</span>
-          </Link>
+
           <Link
             to="/subscription"
             className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
@@ -160,4 +150,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default UserSidebar;
