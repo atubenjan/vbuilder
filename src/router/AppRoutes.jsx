@@ -7,8 +7,6 @@ import AiAssistant from '../pages/AiAssistant';
 import QuestionsSetting from '../pages/QuestionsSetting';
 import { ProjectProvider } from '../contexts/ProjectContext';
 import Organization from '../pages/Organization';
-import MCQPage from '../components/MCQPage';
-import TrueFalsePage from '../components/TrueFalsePage';
 import Analytics from '../pages/Analytics';
 import Subscription from '../pages/Subscription';
 import Logout from '../pages/Logout';
@@ -27,11 +25,7 @@ const AppRoutes = ({ onLogout }) => {
               <Route path="/home" element={<Home />} />
               <Route path="/users" element={<Users />} />
               <Route path="/questions" element={<QuestionsSetting />} />
-              <Route path="/organization" element={<Organization />}>
-                <Route index element={<MCQPage />} />
-                <Route path="mcq" element={<MCQPage />} />
-                <Route path="truefalse" element={<TrueFalsePage />} />
-              </Route>
+              <Route path="/organization" element={<Organization />} />
               <Route path="/subscription" element={<Subscription />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/aiassistant" element={<AiAssistant />} />

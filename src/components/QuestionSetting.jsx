@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AddQuestionAccordion from './AddQuestionAccordion';
+// import AllQuestions from './AllQuestions';
 
 const QuestionSetting = () => {
   const [activeTab, setActiveTab] = useState('questionTypes');
@@ -66,6 +67,14 @@ const QuestionSetting = () => {
             Add Questions
           </button>
         </div>
+        {/* <div className="pb-2">
+          <button
+            onClick={() => setActiveTab('allQuestions')}
+            className={`px-4 py-2 rounded-md ${activeTab === 'allQuestions' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+          >
+            All Questions
+          </button>
+        </div> */}
       </div>
 
       {activeTab === 'questionTypes' && (
@@ -272,6 +281,7 @@ const QuestionSetting = () => {
       )}
 
       {activeTab === 'addQuestion' && <AddQuestionAccordion />}
+      {/* {activeTab === 'allQuestions' && <AllQuestions />} */}
     </div>
   );
 };

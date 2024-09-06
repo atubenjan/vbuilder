@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const HomePage = () => {
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    // Retrieve the user's name from local storage
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  }, []);
+
   return (
-    <div className="px-2 md:px-3 p-3  pt-20">
+    <div className="px-2 md:px-3 p-3 pt-20">
       <div className="w-full h-fit flex justify-between items-center rounded-lg bg-slate-800">
         <div className="text-white p-3 w-full md:w-4/5 text-center">
           <h2 className="text-2xl md:text-4xl text-center">
-            Welcome back to Vbuilder Quizzes
+            Welcome back to Vbuilder Quizzes, {userName}
           </h2>
           <p className="text-center pt-5">Prepare . Practice . Learn</p>
         </div>
