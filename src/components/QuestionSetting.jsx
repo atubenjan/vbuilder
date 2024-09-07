@@ -40,7 +40,7 @@ const QuestionSetting = () => {
   };
 
   return (
-    <div className="p-4 pt-20">
+    <div className="p-4 bg-white rounded-lg">
       <h2 className="pb-4 text-lg font-semibold">Question Settings</h2>
       <div className="items-center justify-start block gap-3 pb-3 mb-4 border-b-2 border-gray-200 sm:flex">
         <div className="pb-2">

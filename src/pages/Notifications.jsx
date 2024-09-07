@@ -9,7 +9,7 @@ const Notifications = () => {
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-slate-200">
         <PageTitle text="Notifications" />
-        <div className="w-full h-full pt-14">
+        <div className="w-full h-full pt-14 bg-slate-200">
           <Notification />
         </div>
       </div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const SubscriptionPriceCard = ({ card }) => {
   return (
-    <div className={`card ${card.cardStyle} p-4 border rounded-lg shadow-md`}>
+    <div className={`card ${card.cardStyle} p-4 border bg-white rounded-lg shadow-md`}>
       <h2 className="mb-4 text-xl font-semibold">{card.plan}</h2>
       <p className="mb-4 text-2xl font-bold">${card.price}/month</p>
       <ul className="mb-4">
