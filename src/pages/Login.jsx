@@ -63,7 +63,7 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-screen px-4 bg-gray-100">
+    <div className="flex items-center justify-center w-full h-screen px-4 bg-slate-200">
       <div className="w-full md:w-4/5 mx-auto flex justify-center items-center gap-0 h-full">
         <div className="h-[61%] w-1/2 hidden lg:block relative rounded-l-lg overflow-hidden">
           <img

@@ -8,13 +8,15 @@ const QuestionsSetting = () => {
   return (
     <div className="flex flex-col w-full min-h-screen">
       {/* Main content */}
-      <div className="flex-grow w-full h-full">
+      <div className="flex-grow w-full h-full bg-slate-200">
         <PageTitle
           text="Questions Setting"
           image={profile}
           showSearch={false}
         />
-        <QuestionSetting />
+        <div className="p-4 h-full w-full pt-20 bg-slate-200">
+          <QuestionSetting />
+        </div>        
       </div>
 
       {/* Footer */}

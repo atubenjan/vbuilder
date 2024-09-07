@@ -10,7 +10,7 @@ const Subscription = () => {
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Subscription" showSearch={false} image={profile} />
-        <div className="px-2 pt-20 md:px-4">
+        <div className="px-2 pt-20 md:px-4 bg-slate-200 pb-4">
           <SubscriptionCardContainer />
         </div>
       </div>
