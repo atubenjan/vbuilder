@@ -25,7 +25,6 @@ const AddQuestionAccordion = () => {
     setQuestionType(value);
   };
 
-
   const questionTypes = [
     { value: 'single', label: 'Single Choice' },
     { value: 'mcq', label: 'Multiple Choice' },

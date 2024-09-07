@@ -16,7 +16,7 @@ const QuestionsSetting = () => {
         />
         <div className="p-4 h-full w-full pt-20 bg-slate-200">
           <QuestionSetting />
-        </div>        
+        </div>
       </div>
 
       {/* Footer */}
