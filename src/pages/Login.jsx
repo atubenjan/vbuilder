@@ -1,5 +1,4 @@
-import React from // useState
-'react';
+import React from 'react'; // useState
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 // import axios from 'axios';
