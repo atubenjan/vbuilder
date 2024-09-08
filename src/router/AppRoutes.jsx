@@ -22,18 +22,33 @@ const AppRoutes = ({ onLogout, role }) => {
           <Sidebar role={role} />
           <div className="flex-grow overflow-y-auto md:ml-60">
             <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/users" element={<Users />} />
+              <Route path="/home" element={<Home role={role} />} />
+              <Route path="/users" element={<Users role={role} />} />
               <Route
                 path="/questions"
                 element={<QuestionsSetting role={role} />}
               />
-              <Route path="/organization" element={<Organization />} />
-              <Route path="/subscription" element={<Subscription />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/aiassistant" element={<AiAssistant />} />
-              <Route path="/certifications" element={<Certifications />} />
-              <Route path="/notifications" element={<Notifications />} />
+              <Route
+                path="/organization"
+                element={<Organization role={role} />}
+              />
+              <Route
+                path="/subscription"
+                element={<Subscription role={role} />}
+              />
+              <Route path="/analytics" element={<Analytics role={role} />} />
+              <Route
+                path="/aiassistant"
+                element={<AiAssistant role={role} />}
+              />
+              <Route
+                path="/certifications"
+                element={<Certifications role={role} />}
+              />
+              <Route
+                path="/notifications"
+                element={<Notifications role={role} />}
+              />
               <Route path="/logout" element={<Logout onLogout={onLogout} />} />
             </Routes>
           </div>

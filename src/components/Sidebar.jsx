@@ -51,7 +51,11 @@ const Sidebar = ({ role }) => {
       >
         <div className="py-4 pl-8 text-left">
           <Link to="/home" className="text-xl font-bold">
-            {role === 'admin' ? 'VBuilder Admin' : role==='organization'?'VBuilder Org':'VBuilder'}
+            {role === 'admin'
+              ? 'VBuilder Admin'
+              : role === 'organization'
+                ? 'VBuilder Org'
+                : 'VBuilder'}
           </Link>
         </div>
         <nav className="flex flex-col gap-1 px-4">

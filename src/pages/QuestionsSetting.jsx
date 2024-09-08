@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import profile from '../assets/profile.jpg';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
 import QuestionSetting from '../components/QuestionSetting';
@@ -10,11 +9,7 @@ const QuestionsSetting = ({ role }) => {
     <div className="flex flex-col w-full min-h-screen">
       {/* Main content */}
       <div className="flex-grow w-full h-full bg-slate-200">
-        <PageTitle
-          text="Questions Setting"
-          image={profile}
-          showSearch={false}
-        />
+        <PageTitle text="Questions Setting" role={role} />
         <div className="p-4 h-full w-full pt-20 bg-slate-200">
           <QuestionSetting role={role} />
         </div>
