@@ -1,48 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import QuizForm from './QuizForm'; // Import the new QuizForm component
 
-const AllQuestions = () => {
-  const [questions, setQuestions] = useState([]);
+const AllQuestions = ({ quizzes }) => {
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
 
-  useEffect(() => {
-    // Fetch all questions from the databsae
-    const fetchAllQuestions = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/questions', {
-          headers: {
-            'x-auth-token': localStorage.getItem('token'),
-          },
-        });
-        setQuestions(response.data);
-      } catch (error) {
-        console.error('Error fetching questions:', error);
-      }
-    };
+  const handleAttemptQuiz = (quiz) => {
+    setSelectedQuiz(quiz); // Set the selected quiz to be attempted
+  };
 
-    fetchAllQuestions();
-  }, []);
+  const handleQuizSubmit = () => {
+    setSelectedQuiz(null); // Reset selected quiz after submission
+  };
 
   return (
-    <div>
-      <h2>All Questions</h2>
-      {questions.length === 0 ? (
-        <p>No questions available.</p>
-      ) : (
-        <ul>
-          {questions.map((question) => (
-            <li key={question.id}>
-              <h3>{question.question_text}</h3>
-              <p>Option A: {question.option_a}</p>
-              <p>Option B: {question.option_b}</p>
-              <p>Option C: {question.option_c}</p>
-              <p>Option D: {question.option_d}</p>
-              <p>Correct Answer: {question.correct_answer}</p>
-            </li>
-          ))}
-        </ul>
+    <div className="mt-4">
+      <h3 className="text-lg font-semibold mb-4">All Quizzes</h3>
+      {quizzes.map((quiz, index) => (
+        <div key={index} className="mb-4 p-3 border border-gray-300 rounded-md">
+          <h4 className="font-medium">{quiz.title}</h4>
+          <p>{quiz.questions.length} Questions</p>
+          <button
+            className="px-4 py-2 text-white bg-gray-800 rounded-md"
+            onClick={() => handleAttemptQuiz(quiz)}
+          >
+            Attempt Quiz
+          </button>
+        </div>
+      ))}
+
+      {selectedQuiz && (
+        <QuizForm quiz={selectedQuiz} onSubmit={handleQuizSubmit} />
       )}
     </div>
   );
+};
+
+AllQuestions.propTypes = {
+  quizzes: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      questions: PropTypes.arrayOf(
+        PropTypes.shape({
+          question_text: PropTypes.string.isRequired,
+          option_a: PropTypes.string.isRequired,
+          option_b: PropTypes.string.isRequired,
+          option_c: PropTypes.string.isRequired,
+          option_d: PropTypes.string.isRequired,
+          correct_answer: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
+    }),
+  ).isRequired,
 };
 
 export default AllQuestions;

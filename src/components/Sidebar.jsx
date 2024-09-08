@@ -13,8 +13,9 @@ import { MdAssistant, MdLogout } from 'react-icons/md';
 import { RiOrganizationChart } from 'react-icons/ri';
 import { TbBrandGoogleAnalytics } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const Sidebar = () => {
+const Sidebar = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
@@ -49,8 +50,8 @@ const Sidebar = () => {
         } md:translate-x-0 md:relative md:block`}
       >
         <div className="py-4 pl-8 text-left">
-          <Link to="/home" className="text-3xl">
-            Admin
+          <Link to="/home" className="text-xl font-bold">
+            {role === 'admin' ? 'VBuilder Admin' : 'VBuilder'}
           </Link>
         </div>
         <nav className="flex flex-col gap-1 px-4">
@@ -64,86 +65,193 @@ const Sidebar = () => {
             <FaHome />
             <span>Home</span>
           </Link>
-          <Link
-            to="/users"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/users' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/users')}
-          >
-            <FaUsers />
-            <span>Users</span>
-          </Link>
-          <Link
-            to="/questions"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/questions' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/questions')}
-          >
-            <FaRegQuestionCircle />
-            <span>Questions Setting</span>
-          </Link>
-          <Link
-            to="/organization"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/organization' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/organization')}
-          >
-            <RiOrganizationChart />
-            <span>Organization</span>
-          </Link>
-          <Link
-            to="/analytics"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/analytics' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/analytics')}
-          >
-            <TbBrandGoogleAnalytics />
-            <span>Analytics</span>
-          </Link>
-          <Link
-            to="/subscription"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/subscription' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/subscription')}
-          >
-            <FaMoneyBill />
-            <span>Subscription</span>
-          </Link>
-          <Link
-            to="/aiassistant"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/aiassistant' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/aiassistant')}
-          >
-            <MdAssistant />
-            <span>Ai Assistant</span>
-          </Link>
-          <Link
-            to="/certifications"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/certifications' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/certifications')}
-          >
-            <FaCertificate />
-            <span>Certifications</span>
-          </Link>
-          <Link
-            to="/notifications"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/notifications' ? 'bg-gray-700' : ''
-            }`}
-            onClick={() => handleLinkClick('/notifications')}
-          >
-            <IoNotificationsOutline />
-            <span>Notifications</span>
-          </Link>
+
+          {/* Common menu items for all users */}
+          {role == 'user' && (
+            <>
+              <Link
+                to="/questions"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/questions')}
+              >
+                <FaRegQuestionCircle />
+                <span>Questions Setting</span>
+              </Link>
+              <Link
+                to="/certifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/certifications')}
+              >
+                <FaCertificate />
+                <span>Certifications</span>
+              </Link>
+              <Link
+                to="/notifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/notifications')}
+              >
+                <IoNotificationsOutline />
+                <span>Notifications</span>
+              </Link>
+            </>
+          )}
+
+          {/* Admin-specific menu items */}
+          {role === 'admin' && (
+            <>
+              <Link
+                to="/users"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/users' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/users')}
+              >
+                <FaUsers />
+                <span>Users</span>
+              </Link>
+              <Link
+                to="/questions"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/questions')}
+              >
+                <FaRegQuestionCircle />
+                <span>Questions Setting</span>
+              </Link>
+              <Link
+                to="/organization"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/organization' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/organization')}
+              >
+                <RiOrganizationChart />
+                <span>Organization</span>
+              </Link>
+              <Link
+                to="/analytics"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/analytics' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/analytics')}
+              >
+                <TbBrandGoogleAnalytics />
+                <span>Analytics</span>
+              </Link>
+              <Link
+                to="/subscription"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/subscription' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/subscription')}
+              >
+                <FaMoneyBill />
+                <span>Subscription</span>
+              </Link>
+              <Link
+                to="/aiassistant"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/aiassistant' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/aiassistant')}
+              >
+                <MdAssistant />
+                <span>AI Assistant</span>
+              </Link>
+              <Link
+                to="/certifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/certifications')}
+              >
+                <FaCertificate />
+                <span>Certifications</span>
+              </Link>
+              <Link
+                to="/notifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/notifications')}
+              >
+                <FaCertificate />
+                <span>Notifications</span>
+              </Link>
+            </>
+          )}
+          {/* SuperAdmin-specific menu items */}
+          {role === 'superadmin' && (
+            <>
+              <Link
+                to="/users"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/users' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/users')}
+              >
+                <FaUsers />
+                <span>Users</span>
+              </Link>
+              <Link
+                to="/questions"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/questions')}
+              >
+                <FaRegQuestionCircle />
+                <span>Questions Setting</span>
+              </Link>
+              <Link
+                to="/organization"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/organization' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/organization')}
+              >
+                <RiOrganizationChart />
+                <span>Organization</span>
+              </Link>
+              <Link
+                to="/analytics"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/analytics' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/analytics')}
+              >
+                <TbBrandGoogleAnalytics />
+                <span>Analytics</span>
+              </Link>
+              <Link
+                to="/certifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/certifications')}
+              >
+                <FaCertificate />
+                <span>Certifications</span>
+              </Link>
+              <Link
+                to="/notifications"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
+                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleLinkClick('/notifications')}
+              >
+                <FaCertificate />
+                <span>Notifications</span>
+              </Link>
+            </>
+          )}
           <Link
             to="/logout"
             className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
@@ -158,6 +266,10 @@ const Sidebar = () => {
       </div>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  role: PropTypes.string.isRequired,
 };
 
 export default Sidebar;
