@@ -14,17 +14,20 @@ import Certifications from '../pages/Certifications';
 import Notifications from '../pages/Notifications';
 import Home from '../pages/Home';
 
-const AppRoutes = ({ onLogout }) => {
+const AppRoutes = ({ onLogout, role }) => {
   return (
     <ProjectProvider>
       <Router>
         <div className="flex w-full">
-          <Sidebar />
+          <Sidebar role={role} />
           <div className="flex-grow overflow-y-auto md:ml-60">
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/users" element={<Users />} />
-              <Route path="/questions" element={<QuestionsSetting />} />
+              <Route
+                path="/questions"
+                element={<QuestionsSetting role={role} />}
+              />
               <Route path="/organization" element={<Organization />} />
               <Route path="/subscription" element={<Subscription />} />
               <Route path="/analytics" element={<Analytics />} />
@@ -42,6 +45,7 @@ const AppRoutes = ({ onLogout }) => {
 
 AppRoutes.propTypes = {
   onLogout: PropTypes.func.isRequired,
+  role: PropTypes.string.isRequired,
 };
 
 export default AppRoutes;

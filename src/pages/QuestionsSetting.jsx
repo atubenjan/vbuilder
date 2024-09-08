@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import profile from '../assets/profile.jpg';
 import PageTitle from '../components/PageTitle';
 import Footer from '../components/Footer';
 import QuestionSetting from '../components/QuestionSetting';
 
-const QuestionsSetting = () => {
+const QuestionsSetting = ({ role }) => {
   return (
     <div className="flex flex-col w-full min-h-screen">
       {/* Main content */}
@@ -15,7 +16,7 @@ const QuestionsSetting = () => {
           showSearch={false}
         />
         <div className="p-4 h-full w-full pt-20 bg-slate-200">
-          <QuestionSetting />
+          <QuestionSetting role={role} />
         </div>
       </div>
 
@@ -25,6 +26,10 @@ const QuestionsSetting = () => {
       </div>
     </div>
   );
+};
+
+QuestionsSetting.propTypes = {
+  role: PropTypes.string.isRequired,
 };
 
 export default QuestionsSetting;
