@@ -64,24 +64,3 @@ const App = () => {
 };
 
 export default App;
-
-// import React from 'react';
-// import MCQComponent from './components/MCQComponent';
-
-// const App = () => {
-//   const question = 'What is the capital of France?';
-//   const options = ['Paris', 'London', 'Rome', 'Berlin'];
-//   const correctOption = 'Paris';
-
-//   return (
-//     <div className='w-full h-screen flex justify-center py-5'>
-//       <MCQComponent
-//         question={question}
-//         options={options}
-//         correctOption={correctOption}
-//       />
-//     </div>
-//   );
-// };
-
-// export default App;
