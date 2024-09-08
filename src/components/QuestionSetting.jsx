@@ -40,7 +40,7 @@ const QuestionSetting = ({ role }) => {
     <div className="p-4 bg-white rounded-lg">
       <h2 className="pb-4 text-lg font-semibold">Question Settings</h2>
       <div className="items-center justify-start block gap-3 pb-3 mb-4 border-b-2 border-gray-200 sm:flex">
-        {role === 'superadmin' ? (
+        {role === 'admin' ? (
           <>
             <div className="pb-2">
               <button
@@ -51,7 +51,7 @@ const QuestionSetting = ({ role }) => {
               </button>
             </div>
           </>
-        ) : role === 'admin' ? (
+        ) : role === 'organization' ? (
           <>
             <div className="pb-2">
               <button
@@ -84,10 +84,10 @@ const QuestionSetting = ({ role }) => {
         ) : null}
       </div>
 
-      {activeTab === 'questionTypes' && role === 'superadmin' && (
+      {activeTab === 'questionTypes' && role === 'admin' && (
         <QuestionToggleButtons />
       )}
-      {activeTab === 'uploadFile' && role === 'admin' && (
+      {activeTab === 'uploadFile' && role === 'organization' && (
         <div className="mt-4">
           <input
             type="file"
@@ -112,7 +112,7 @@ const QuestionSetting = ({ role }) => {
         </div>
       )}
 
-      {activeTab === 'addQuestion' && role === 'admin' && (
+      {activeTab === 'addQuestion' && role === 'organization' && (
         <AddQuestions addQuizToAllQuestions={addQuizToAllQuestions} />
       )}
 
