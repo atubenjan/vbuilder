@@ -49,14 +49,17 @@ const AllQuestions = () => {
       </div>
 
       {selectedQuiz && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center w-full bg-black bg-opacity-50">
-          <div className="relative w-11/12 p-6 bg-white rounded-lg shadow-lg md:w-1/2">
-            <button
-              className="absolute text-red-600 top-2 right-2"
-              onClick={() => handleQuizSubmit()}
-            >
-              <FaTimes />
-            </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center w-full overflow-y-auto bg-black bg-opacity-50">
+          <div className="relative w-11/12 p-5 mt-32 bg-white rounded-lg shadow-lg md:w-1/2">
+            <div className="flex justify-between w-full">
+              <h2 className="pb-5 text-2xl">{selectedQuiz.Title}</h2>
+              <button
+                className="absolute text-red-600 top-5 right-4"
+                onClick={() => handleQuizSubmit()}
+              >
+                <FaTimes />
+              </button>
+            </div>
             <QuizForm quiz={selectedQuiz} onSubmit={handleQuizSubmit} />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart } from '@mui/x-charts/LineChart';
+import HomeSummary from './HomeSummary';
 
 const xLabels = [
   'Jan',
@@ -61,6 +62,7 @@ const HomeCharts = () => {
             grid={{ vertical: true, horizontal: true }}
           />
         </div>
+        <HomeSummary />
       </div>
     </div>
   );

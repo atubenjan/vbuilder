@@ -302,41 +302,90 @@ const AddQuestions = () => {
       {isReviewStep && (
         <div className="p-5 border border-gray-200">
           <h2 className="mb-4 text-xl font-semibold">Review Questions</h2>
-          <ul>
+          <div>
             {questions.map((question, index) => (
-              <li key={index} className="mb-2">
+              <div key={index} className="mb-2">
                 <p className="font-bold">
                   Q{index + 1}: {question.Question}
                 </p>
-                <p>A. {question.OptionA}</p>
-                <p>B. {question.OptionB}</p>
-                <p>C. {question.OptionC}</p>
-                <p>D. {question.OptionD}</p>
+                <label>
+                  <input
+                    type="radio"
+                    name={`OptionA`}
+                    value={question.OptionA}
+                    onChange={(e) => {
+                      e.target.value;
+                    }}
+                    className="mr-2"
+                  />
+                  {question.OptionA}
+                </label>
+                <br />
+                <label>
+                  <input
+                    type="radio"
+                    name={`OptionB`}
+                    value={question.OptionB}
+                    onChange={(e) => {
+                      e.target.value;
+                    }}
+                    className="mr-2"
+                  />
+                  {question.OptionB}
+                </label>
+                <br />
+                <label>
+                  <input
+                    type="radio"
+                    name={`OptionC`}
+                    value={question.OptionC}
+                    onChange={(e) => {
+                      e.target.value;
+                    }}
+                    className="mr-2"
+                  />
+                  {question.OptionC}
+                </label>
+                <br />
+                <label>
+                  <input
+                    type="radio"
+                    name={`OptionD`}
+                    value={question.OptionD}
+                    onChange={(e) => {
+                      e.target.value;
+                    }}
+                    className="mr-2"
+                  />
+                  {question.OptionD}
+                </label>
                 <p>Correct Answer: {question.CorrectAnswer}</p>
-              </li>
+              </div>
             ))}
-          </ul>
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="px-4 py-2 mr-4 text-white bg-gray-800 rounded-md"
-          >
-            Go Back
-          </button>
-          <button
-            type="button"
-            onClick={downloadQuestions}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md"
-          >
-            Download Questions
-          </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md"
-          >
-            Submit Quiz
-          </button>
+          </div>
+          <div className="flex flex-wrap w-full gap-3">
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="px-4 py-2 mr-4 text-white bg-gray-800 rounded-md"
+            >
+              Go Back
+            </button>
+            <button
+              type="button"
+              onClick={downloadQuestions}
+              className="px-4 py-2 text-white bg-gray-800 rounded-md"
+            >
+              Download Questions
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="px-4 py-2 text-white bg-gray-800 rounded-md"
+            >
+              Submit Quiz
+            </button>
+          </div>
         </div>
       )}
     </div>
