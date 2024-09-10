@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -13,31 +16,43 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (user.password !== confirmPassword) {
       setError("Passwords don't match");
       return;
+    } else if (user.password.length < 6) {
+      setError('Password must be atleast 6 characters long');
     }
 
     try {
-      await axios.post('http://localhost:5000/signup', {
-        username,
-        email,
-        password,
-      });
+      await axios.post('http://localhost:5000/users', user);
+      alert('User created successfully');
       navigate('/login');
     } catch (err) {
-      setError('An error occurred during signup. Please try again.' + err);
+      if (err.response && err.response.status === 409) {
+        setError('Email already exists. Please use a different email.');
+      } else {
+        setError(
+          'An error occurred during signup. Please try again. ' + err.message,
+        );
+      }
     }
+  };
+
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
     <div className="flex items-center justify-center w-full h-screen px-4 bg-gray-100">
-      <div className="w-full md:w-4/5 mx-auto flex justify-center items-center gap-0 h-full">
+      <div className="flex items-center justify-center w-full h-full gap-0 mx-auto md:w-4/5">
         <div className="h-[61%] w-1/2 hidden lg:block relative rounded-l-lg overflow-hidden">
           <img
             src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl8zZF9pbGx1c3RyYXRpb25fb2ZfYV9ib3lfc2l0dGluZ19vbl90aGVfZmxvb18zMjc1NTFkMC1mMzRiLTQ3NzItYjg4YS1hOGM5Yzg2ODFiMzFfMS5qcGc.jpg"
             alt="Learner"
-            className="w-full hidden md:block h-full object-cover rounded-l-lg object-center"
+            className="hidden object-cover object-center w-full h-full rounded-l-lg md:block"
           />
         </div>
         <form
@@ -51,8 +66,9 @@ const Signup = () => {
           <div className="relative mb-6">
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name="username"
+              value={user.username}
+              onChange={handleChange}
               className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
               placeholder=" "
             />
@@ -64,8 +80,9 @@ const Signup = () => {
           <div className="relative mb-6">
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={user.email}
+              onChange={handleChange}
               className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
               placeholder=" "
             />
@@ -77,8 +94,9 @@ const Signup = () => {
           <div className="relative mb-6">
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={user.password}
+              onChange={handleChange}
               className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
               placeholder=" "
             />
@@ -111,6 +129,7 @@ const Signup = () => {
           <div className="py-5">
             Already have an account?
             <button
+              type="button"
               className="px-5 py-2 ml-3 rounded-lg hover:bg-slate-500 hover:text-white bg-slate-200"
               onClick={() => navigate('/login')}
             >

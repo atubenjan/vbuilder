@@ -16,7 +16,7 @@ const QuizForm = ({ quiz, onSubmit }) => {
 
     let correctCount = 0;
     quiz.questions.forEach((question, index) => {
-      if (selectedAnswers[index] === question.correct_answer) {
+      if (selectedAnswers[index] === question.CorrectAnswer) {
         correctCount++;
       }
     });
@@ -33,56 +33,56 @@ const QuizForm = ({ quiz, onSubmit }) => {
   }
 
   return (
-    <div className="p-4 mt-4 border border-gray-300 rounded-md">
-      <h2 className="mb-4 text-xl font-semibold">{quiz.title}</h2>
+    <div className="p-4 border border-gray-300 rounded-md">
+      <h2 className="mb-3 text-xl font-semibold">{quiz.questions.Title}</h2>
       <form onSubmit={handleSubmit}>
         {quiz.questions.map((question, index) => (
           <div key={index} className="mb-4">
-            <h4 className="mb-2">{question.question_text}</h4>
+            <h4 className="mb-2">{question.Question}</h4>
             <div className="flex flex-col">
               <label className="mb-1">
                 <input
                   type="radio"
                   name={`question_${index}`}
-                  value={question.option_a}
-                  checked={selectedAnswers[index] === question.option_a}
-                  onChange={() => handleOptionChange(index, question.option_a)}
+                  value={question.OptionA}
+                  checked={selectedAnswers[index] === question.OptionA}
+                  onChange={() => handleOptionChange(index, question.OptionA)}
                   className="mr-2"
                 />
-                {question.option_a}
+                {question.OptionA}
               </label>
               <label className="mb-1">
                 <input
                   type="radio"
                   name={`question_${index}`}
-                  value={question.option_b}
-                  checked={selectedAnswers[index] === question.option_b}
-                  onChange={() => handleOptionChange(index, question.option_b)}
+                  value={question.OptionB}
+                  checked={selectedAnswers[index] === question.OptionB}
+                  onChange={() => handleOptionChange(index, question.OptionB)}
                   className="mr-2"
                 />
-                {question.option_b}
+                {question.OptionB}
               </label>
               <label className="mb-1">
                 <input
                   type="radio"
                   name={`question_${index}`}
-                  value={question.option_c}
-                  checked={selectedAnswers[index] === question.option_c}
-                  onChange={() => handleOptionChange(index, question.option_c)}
+                  value={question.OptionC}
+                  checked={selectedAnswers[index] === question.OptionC}
+                  onChange={() => handleOptionChange(index, question.OptionC)}
                   className="mr-2"
                 />
-                {question.option_c}
+                {question.OptionC}
               </label>
               <label className="mb-1">
                 <input
                   type="radio"
                   name={`question_${index}`}
-                  value={question.option_d}
-                  checked={selectedAnswers[index] === question.option_d}
-                  onChange={() => handleOptionChange(index, question.option_d)}
+                  value={question.OptionD}
+                  checked={selectedAnswers[index] === question.OptionD}
+                  onChange={() => handleOptionChange(index, question.OptionD)}
                   className="mr-2"
                 />
-                {question.option_d}
+                {question.OptionD}
               </label>
             </div>
           </div>

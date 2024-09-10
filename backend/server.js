@@ -1,116 +1,269 @@
-const express = require("express");
+/*
+const express = require('express');
 const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mysql = require("mysql2");
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = 'VB@2024'; // Replace with your secret key
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // Create MySQL connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Steph@0136",
-  database: "vbuilder_quiz_db",
+  host: 'localhost',
+  user: 'root',
+  password: 'Steph@0136',
+  database: 'vbuilder_quiz_db',
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("Database connection failed:", err.stack);
+    console.error('Database connection failed:', err.stack);
     return;
   }
-  console.log("Connected to database.");
+  console.log('Connected to database.');
 });
 
-// Route to add the quiz title and id
-app.post("/quizzes", (req, res) => {
-  const { title, quiz_id } = req.body;
+// Route to add users
+app.post('/users', async (req, res) => {
+  const { username, email, password } = req.body;
 
-  if (!title || !quiz_id) {
-    return res.status(400).json({ message: "Quiz title and ID are required" });
+  // Validate the input fields
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const query = "INSERT INTO quizzes (title, quiz_id) VALUES (?, ?)";
-  db.query(query, [title, quiz_id], (err, results) => {
+  // Hash the password using bcryptjs
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Generate a custom UserId in the format 'VBXXXX'
+  const generateUserId = () => {
+    const randomNum = Math.floor(1000 + Math.random() * 9000); // Generates a random 4-digit number
+    return `VB${randomNum}`;
+  };
+
+  const userId = generateUserId();
+
+  // Insert the new user into the database
+  const query =
+    "INSERT INTO users (UserId, Username, Email, Password, Role) VALUES (?, ?, ?, ?, 'user')";
+
+  db.query(query, [userId, username, email, hashedPassword], (err, results) => {
     if (err) {
-      console.error("Error inserting quiz:", err);
-      return res.status(500).json({ message: "Failed to insert quiz" });
+      // Check if email already exists (unique constraint)
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ message: 'Email already exists' });
+      }
+      console.error('Error inserting user:', err);
+      return res.status(500).json({ message: 'Failed to insert user' });
     }
+
+    res
+      .status(201)
+      .json({ message: 'User created successfully', UserId: userId });
+  });
+});
+
+// Route to handle user login
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  // Query the database to find the user by email
+  const query = 'SELECT * FROM users WHERE Email = ?';
+  db.query(query, [email], async (err, results) => {
+    if (err) {
+      console.error('Error retrieving user:', err);
+      return res.status(500).json({ message: 'Server error' });
+    }
+
+    // If no user is found with the provided email
+    if (results.length === 0) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const user = results[0];
+
+    // Compare the provided password with the hashed password stored in the database
+    const isPasswordValid = await bcrypt.compare(password, user.Password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign(
+      { userId: user.UserId, role: user.Role },
+      JWT_SECRET,
+      {
+        expiresIn: '1h', // Token expires in 1 hour
+      },
+    );
+
+    // Respond with the JWT token and user details
     res.status(200).json({
-      message: "Quiz info received successfully!",
-      quizId: quiz_id,
+      message: 'Login successful',
+      token,
+      userId: user.UserId,
+      username: user.Username,
+      role: user.Role,
     });
   });
 });
 
-// Route to add the questions and their answers
-app.post("/questions", (req, res) => {
-  const { questions, quiz_id } = req.body;
+// Route to get all users
+app.get('/users', (req, res) => {
+  const query = 'SELECT * FROM users';
 
-  if (!questions || !quiz_id) {
-    return res
-      .status(400)
-      .json({ message: "Questions and quiz ID are required" });
-  }
-
-  const query =
-    "INSERT INTO questions (quiz_id, question_text, correct_answer, option_a, option_b, option_c, option_d) VALUES ?";
-  const values = questions.map((q) => [
-    quiz_id,
-    q.question_text,
-    q.correct_answer,
-    q.option_a,
-    q.option_b,
-    q.option_c,
-    q.option_d,
-  ]);
-
-  db.query(query, [values], (err) => {
+  db.query(query, (err, results) => {
     if (err) {
-      console.error("Error inserting questions:", err);
-      return res.status(500).json({ message: "Failed to insert questions" });
+      console.error('Error retrieving users:', err);
+      return res.status(500).json({ message: 'Failed to retrieve users' });
     }
-    res.status(200).json({ message: "Questions received successfully!" });
+
+    res.status(200).json(results);
   });
 });
 
-// Route to get all quizzes
-app.get("/quizzes", (req, res) => {
+// Route to add the quiz title and id
+app.post('/quizzes', (req, res) => {
+  const { Title, QuizId } = req.body;
+
+  if (!Title || !QuizId) {
+    return res.status(400).json({ message: 'Quiz title and ID are required' });
+  }
+
+  const query = 'INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)';
+  db.query(query, [Title, QuizId], (err, results) => {
+    if (err) {
+      console.error('Error inserting quiz:', err);
+      return res.status(500).json({ message: 'Failed to insert quiz' });
+    }
+    res.status(200).json({
+      message: 'Quiz info received successfully!',
+      QuizId: QuizId,
+    });
+  });
+});
+
+// Route to count users by month
+app.get('/users/count-by-month', (req, res) => {
   const query = `
-    SELECT q.title AS quiz_title, q.quiz_id, 
-           qs.id AS question_id, qs.question_text, 
-           qs.option_a, qs.option_b, qs.option_c, 
-           qs.option_d, qs.correct_answer
-    FROM quizzes q
-    LEFT JOIN questions qs ON q.quiz_id = qs.quiz_id
+    SELECT
+      DATE_FORMAT(created_at, '%b') AS month,
+      COUNT(*) AS count
+    FROM users
+    GROUP BY month
+    ORDER BY MONTH(STR_TO_DATE(month, '%b'))
   `;
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error("Error retrieving quizzes:", err);
-      return res.status(500).json({ message: "Failed to retrieve quizzes" });
+      console.error('Error retrieving user counts by month:', err);
+      return res
+        .status(500)
+        .json({ message: 'Failed to retrieve user counts' });
+    }
+
+    // Ensure that all months are represented
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const counts = months.map((month) => {
+      const row = results.find((r) => r.month === month);
+      return row ? row.count : 0;
+    });
+
+    res.json(counts);
+  });
+});
+
+// Route to add the questions and their answers
+app.post('/questions', (req, res) => {
+  const { questions, QuizId } = req.body;
+
+  if (!questions || !QuizId) {
+    return res
+      .status(400)
+      .json({ message: 'Questions and quiz ID are required' });
+  }
+
+  const query =
+    'INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD) VALUES ?';
+  const values = questions.map((q) => [
+    QuizId,
+    q.Question,
+    q.QuestionId,
+    q.CorrectAnswer,
+    q.OptionA,
+    q.OptionB,
+    q.OptionC,
+    q.OptionD,
+  ]);
+
+  db.query(query, [values], (err) => {
+    if (err) {
+      console.error('Error inserting questions:', err);
+      return res.status(500).json({ message: 'Failed to insert questions' });
+    }
+    res.status(200).json({ message: 'Questions received successfully!' });
+  });
+});
+
+// Route to get all quizzes
+app.get('/quizzes', (req, res) => {
+  const query = `
+    SELECT q.Title, q.QuizId, 
+           qs.QuestionId, qs.Question, 
+           qs.OptionA, qs.OptionB, qs.OptionC, 
+           qs.OptionD, qs.CorrectAnswer
+    FROM quizzes q
+    LEFT JOIN questions qs ON q.QuizId = qs.QuizId
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error retrieving quizzes:', err);
+      return res.status(500).json({ message: 'Failed to retrieve quizzes' });
     }
 
     // Group results by quiz
     const quizzes = results.reduce((acc, row) => {
-      if (!acc[row.quiz_id]) {
-        acc[row.quiz_id] = {
-          title: row.quiz_title,
-          quiz_id: row.quiz_id,
+      if (!acc[row.QuizId]) {
+        acc[row.QuizId] = {
+          Title: row.Title,
+          QuizId: row.QuizId,
           questions: [],
         };
       }
 
-      if (row.question_id) {
-        acc[row.quiz_id].questions.push({
-          question_id: row.question_id,
-          question_text: row.question_text,
-          option_a: row.option_a,
-          option_b: row.option_b,
-          option_c: row.option_c,
-          option_d: row.option_d,
-          correct_answer: row.correct_answer,
+      if (row.QuestionId) {
+        acc[row.QuizId].questions.push({
+          QuestionId: row.QuestionId,
+          Question: row.Question,
+          OptionA: row.OptionA,
+          OptionB: row.OptionB,
+          OptionC: row.OptionC,
+          OptionD: row.OptionD,
+          CorrectAnswer: row.CorrectAnswer,
         });
       }
 
@@ -125,3 +278,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+*/
