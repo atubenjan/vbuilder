@@ -32,13 +32,19 @@ const QuizForm = ({ quiz, onSubmit }) => {
     return <p>Loading quiz...</p>;
   }
 
+  // Reverse the order of questions
+  const reversedQuestions = [...quiz.questions].reverse();
+
   return (
     <div className="p-4 border border-gray-300 rounded-md">
-      <h2 className="mb-3 text-xl font-semibold">{quiz.questions.Title}</h2>
+      <h2>{quiz.title}</h2>
       <form onSubmit={handleSubmit}>
-        {quiz.questions.map((question, index) => (
+        {reversedQuestions.map((question, index) => (
           <div key={index} className="mb-4">
-            <h4 className="mb-2">{question.Question}</h4>
+            <h4 className="mb-2">
+              <span className="pr-2">{question.QuestionId} .</span>
+              {question.Question}
+            </h4>
             <div className="flex flex-col">
               <label className="mb-1">
                 <input
@@ -100,10 +106,11 @@ const QuizForm = ({ quiz, onSubmit }) => {
 
 QuizForm.propTypes = {
   quiz: PropTypes.shape({
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     questions: PropTypes.arrayOf(
       PropTypes.shape({
-        question_text: PropTypes.string.isRequired,
+        QuestionId: PropTypes.string.isRequired,
+        Question: PropTypes.string.isRequired,
         option_a: PropTypes.string.isRequired,
         option_b: PropTypes.string.isRequired,
         option_c: PropTypes.string.isRequired,

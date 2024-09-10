@@ -228,6 +228,20 @@ app.post('/questions', (req, res) => {
   });
 });
 
+// Route to get all users
+app.get('/questions', (req, res) => {
+  const query = 'SELECT * FROM questions';
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error retrieving questions:', err);
+      return res.status(500).json({ message: 'Failed to retrieve questions' });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
 // Route to get all quizzes
 app.get('/quizzes', (req, res) => {
   const query = `
