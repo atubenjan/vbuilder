@@ -25,35 +25,65 @@ const QuizForm = ({ quiz, onSubmit }) => {
       `You answered ${correctCount} out of ${quiz.questions.length} questions correctly!`,
     );
 
-    onSubmit(); // Notify parent component that quiz submission is done
+    onSubmit(); // Reset the selected quiz after submission
   };
 
+  if (!quiz) {
+    return <p>Loading quiz...</p>;
+  }
+
   return (
-    <div className="mt-4 p-4 border border-gray-300 rounded-md">
-      <h2 className="text-xl font-semibold mb-4">{quiz.title}</h2>
+    <div className="p-4 mt-4 border border-gray-300 rounded-md">
+      <h2 className="mb-4 text-xl font-semibold">{quiz.title}</h2>
       <form onSubmit={handleSubmit}>
         {quiz.questions.map((question, index) => (
           <div key={index} className="mb-4">
             <h4 className="mb-2">{question.question_text}</h4>
             <div className="flex flex-col">
-              {[
-                question.option_a,
-                question.option_b,
-                question.option_c,
-                question.option_d,
-              ].map((option, optionIndex) => (
-                <label key={optionIndex} className="mb-1">
-                  <input
-                    type="radio"
-                    name={`question_${index}`}
-                    value={option}
-                    checked={selectedAnswers[index] === option}
-                    onChange={() => handleOptionChange(index, option)}
-                    className="mr-2"
-                  />
-                  {option}
-                </label>
-              ))}
+              <label className="mb-1">
+                <input
+                  type="radio"
+                  name={`question_${index}`}
+                  value={question.option_a}
+                  checked={selectedAnswers[index] === question.option_a}
+                  onChange={() => handleOptionChange(index, question.option_a)}
+                  className="mr-2"
+                />
+                {question.option_a}
+              </label>
+              <label className="mb-1">
+                <input
+                  type="radio"
+                  name={`question_${index}`}
+                  value={question.option_b}
+                  checked={selectedAnswers[index] === question.option_b}
+                  onChange={() => handleOptionChange(index, question.option_b)}
+                  className="mr-2"
+                />
+                {question.option_b}
+              </label>
+              <label className="mb-1">
+                <input
+                  type="radio"
+                  name={`question_${index}`}
+                  value={question.option_c}
+                  checked={selectedAnswers[index] === question.option_c}
+                  onChange={() => handleOptionChange(index, question.option_c)}
+                  className="mr-2"
+                />
+                {question.option_c}
+              </label>
+              <label className="mb-1">
+                <input
+                  type="radio"
+                  name={`question_${index}`}
+                  value={question.option_d}
+                  checked={selectedAnswers[index] === question.option_d}
+                  onChange={() => handleOptionChange(index, question.option_d)}
+                  className="mr-2"
+                />
+                {question.option_d}
+              </label>
             </div>
           </div>
         ))}

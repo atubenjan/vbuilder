@@ -8,7 +8,6 @@ import { ProjectProvider } from './contexts/ProjectContext';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import LandingPage from './components/LandingPage';
-// import UserRoutes from './router/UserRoutes';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,7 +41,7 @@ const App = () => {
     setIsLoggedIn(false);
   };
 
-  const role = 'admin';
+  const role = 'user';
 
   return (
     <ProjectProvider>

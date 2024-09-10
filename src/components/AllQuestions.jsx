@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import QuizForm from './QuizForm'; // Import the new QuizForm component
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import QuizForm from './QuizForm'; // Import the QuizForm component
 
-const AllQuestions = ({ quizzes }) => {
+const AllQuestions = () => {
+  const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/quizzes');
+        setQuizzes(response.data);
+      } catch (error) {
+        console.error('Error fetching quizzes:', error);
+      }
+    };
+
+    fetchQuizzes();
+  }, []);
 
   const handleAttemptQuiz = (quiz) => {
     setSelectedQuiz(quiz); // Set the selected quiz to be attempted
@@ -15,9 +29,9 @@ const AllQuestions = ({ quizzes }) => {
 
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-4">All Quizzes</h3>
+      <h3 className="mb-4 text-lg font-semibold">All Quizzes</h3>
       {quizzes.map((quiz, index) => (
-        <div key={index} className="mb-4 p-3 border border-gray-300 rounded-md">
+        <div key={index} className="p-3 mb-4 border border-gray-300 rounded-md">
           <h4 className="font-medium">{quiz.title}</h4>
           <p>{quiz.questions.length} Questions</p>
           <button
@@ -34,24 +48,6 @@ const AllQuestions = ({ quizzes }) => {
       )}
     </div>
   );
-};
-
-AllQuestions.propTypes = {
-  quizzes: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      questions: PropTypes.arrayOf(
-        PropTypes.shape({
-          question_text: PropTypes.string.isRequired,
-          option_a: PropTypes.string.isRequired,
-          option_b: PropTypes.string.isRequired,
-          option_c: PropTypes.string.isRequired,
-          option_d: PropTypes.string.isRequired,
-          correct_answer: PropTypes.string.isRequired,
-        }),
-      ).isRequired,
-    }),
-  ).isRequired,
 };
 
 export default AllQuestions;
