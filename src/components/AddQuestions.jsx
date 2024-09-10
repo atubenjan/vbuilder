@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import axios from 'axios';
 
-const AddQuestions = ({ addQuizToAllQuestions }) => {
+const AddQuestions = () => {
   const [quizTitle, setQuizTitle] = useState('');
+  const [quizId, setQuizId] = useState('');
   const [numQuestionsInput, setNumQuestionsInput] = useState('');
   const [numQuestions, setNumQuestions] = useState('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -19,6 +20,8 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
     correct_answer: '',
   });
 
+  const [nextQuestionId, setNextQuestionId] = useState(1);
+
   const handleChange = (e) => {
     setQuestionData({
       ...questionData,
@@ -26,7 +29,7 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
     });
   };
 
-  const handleSaveQuestion = () => {
+  const handleSaveQuestion = async () => {
     if (
       !questionData.question_text ||
       !questionData.option_a ||
@@ -39,7 +42,10 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
       return;
     }
 
-    setQuestions([...questions, questionData]);
+    const questionId = nextQuestionId;
+    setNextQuestionId(nextQuestionId + 1);
+
+    setQuestions([...questions, { ...questionData, question_id: questionId }]);
 
     setQuestionData({
       question_text: '',
@@ -57,19 +63,40 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Directly send data to AllQuestions component
-    addQuizToAllQuestions({ title: quizTitle, questions });
+    try {
+      // Save the quiz title and quiz ID
+      const quizResponse = await axios.post('http://localhost:5000/quizzes', {
+        title: quizTitle,
+        quiz_id: quizId,
+      });
 
-    // Reset state after submission
-    setQuestions([]);
-    setCurrentQuestionIndex(0);
-    setNumQuestions('');
-    setQuizTitle('');
-    setIsReviewStep(false);
-    setShowNumQuestionsInput(false);
+      if (quizResponse.status === 200) {
+        console.log('Quiz info saved:', quizResponse.data);
+
+        // Save the questions associated with the quiz ID
+        const questionsResponse = await axios.post(
+          'http://localhost:5000/questions',
+          {
+            questions,
+            quiz_id: quizId,
+          },
+        );
+
+        if (questionsResponse.status === 200) {
+          console.log('Questions saved successfully' + questionsResponse.data);
+          alert('Quiz and questions saved successfully!');
+        } else {
+          console.error('Failed to save questions');
+        }
+      } else {
+        console.error('Failed to save quiz info');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz and questions:', error);
+    }
   };
 
   const handleNumQuestionsConfirm = () => {
@@ -98,6 +125,7 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
     setNumQuestions('');
     setCurrentQuestionIndex(0);
     setQuestions([]);
+    setNextQuestionId(1);
   };
 
   const handleTitleNext = () => {
@@ -116,9 +144,22 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
             type="text"
             value={quizTitle}
             onChange={(e) => setQuizTitle(e.target.value)}
-            className="w-full p-2 mb-4 outline-none border border-gray-300 rounded-md"
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
             placeholder="Enter the quiz title"
           />
+
+          {/* Quiz ID Input */}
+          <label className="block mb-2 text-sm font-medium text-gray-900">
+            Quiz ID:
+          </label>
+          <input
+            type="text"
+            value={quizId}
+            onChange={(e) => setQuizId(e.target.value)}
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
+            placeholder="Enter quiz ID"
+          />
+
           {quizTitle && (
             <button
               type="button"
@@ -141,7 +182,7 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
             type="number"
             value={numQuestionsInput}
             onChange={(e) => setNumQuestionsInput(e.target.value)}
-            className="w-full p-2 mb-4 outline-none border border-gray-300 rounded-md"
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
             placeholder="Enter number of questions"
           />
           <button
@@ -164,6 +205,7 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
               <label className="block mb-2 text-sm font-medium text-gray-900">
                 Question {currentQuestionIndex + 1}:
               </label>
+
               <input
                 type="text"
                 name="question_text"
@@ -229,53 +271,47 @@ const AddQuestions = ({ addQuizToAllQuestions }) => {
           </div>
         )}
 
-      {/* Review and Submit Step */}
+      {/* Review Step */}
       {isReviewStep && (
-        <div className="p-5 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-4">Review Questions</h3>
-          {questions.map((q, index) => (
-            <div
-              key={index}
-              className="mb-4 p-3 border border-gray-300 rounded-md"
+        <div>
+          <h3 className="mb-4 text-lg font-bold text-gray-800">
+            Review Questions
+          </h3>
+          <ul>
+            {questions.map((question, index) => (
+              <li key={index} className="mb-2">
+                {index + 1}. {question.question_text} (Correct Answer:{' '}
+                {question.correct_answer})
+              </li>
+            ))}
+          </ul>
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={downloadQuestions}
+              className="px-4 py-2 text-white bg-gray-800 rounded-md"
             >
-              <h4 className="font-medium">Question {index + 1}:</h4>
-              <p>{q.question_text}</p>
-              <p>A: {q.option_a}</p>
-              <p>B: {q.option_b}</p>
-              <p>C: {q.option_c}</p>
-              <p>D: {q.option_d}</p>
-              <p>Correct Answer: {q.correct_answer}</p>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md mr-2"
-          >
-            Submit
-          </button>
-          <button
-            type="button"
-            onClick={downloadQuestions}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md mr-2"
-          >
-            Download JSON
-          </button>
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md"
-          >
-            Go to Start
-          </button>
+              Download Questions
+            </button>
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className="px-4 py-2 ml-4 text-white bg-blue-600 rounded-md"
+            >
+              Submit Quiz
+            </button>
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="px-4 py-2 ml-4 text-white bg-red-600 rounded-md"
+            >
+              Go Back
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
-};
-
-AddQuestions.propTypes = {
-  addQuizToAllQuestions: PropTypes.func.isRequired,
 };
 
 export default AddQuestions;
