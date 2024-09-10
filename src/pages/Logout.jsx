@@ -16,23 +16,23 @@ const Logout = ({ onLogout }) => {
     navigate('/home');
   };
   return (
-    <div className="flex flex-col w-full min-h-screen">
+    <div className="flex flex-col w-full h-screen">
       {/* Main content area */}
       <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Logout" showSearch={false} />
-        <div className="flex items-center bg-slate-200 justify-center w-full h-full pt-20">
-          <div className="p-10 bg-slate-700 text-white rounded-lg shadow-xl">
+        <div className="flex items-center justify-center w-full h-full pt-20 bg-slate-200">
+          <div className="p-10 text-white rounded-lg shadow-xl bg-slate-700">
             <h2>Are you sure you want to logout?</h2>
             <div className="flex items-center justify-around w-full pt-10 pb-0">
               <button
                 onClick={handleLogout}
-                className="px-5 py-1 rounded-lg bg-white text-black hover:bg-slate-400"
+                className="px-5 py-1 text-black bg-white rounded-lg hover:bg-slate-400"
               >
                 Yes
               </button>
               <button
                 onClick={handleNoLogout}
-                className="px-5 py-1 rounded-lg bg-white text-black hover:bg-slate-400"
+                className="px-5 py-1 text-black bg-white rounded-lg hover:bg-slate-400"
               >
                 No
               </button>

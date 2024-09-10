@@ -22,7 +22,6 @@ const HomeCharts = () => {
   const [labels, setLabels] = useState([]);
 
   useEffect(() => {
-    // Fetch the monthly user data
     const fetchUserCounts = async () => {
       try {
         const response = await axios.get(
@@ -30,25 +29,15 @@ const HomeCharts = () => {
         );
         const data = response.data;
 
-        // Determine the last month with non-zero data
-        const lastNonZeroIndex = data.reduceRight(
-          (acc, count, index) => (count > 0 ? index : acc),
-          -1,
-        );
+        // Get the current month index (0-based)
+        const currentMonthIndex = new Date().getMonth();
 
-        // If there's no data, set empty arrays
-        if (lastNonZeroIndex === -1) {
-          setUserCounts([]);
-          setLabels([]);
-          return;
-        }
+        // Slice data and labels up to the current month
+        const trimmedLabels = xLabels.slice(0, currentMonthIndex + 1);
+        const trimmedCounts = data.slice(0, currentMonthIndex + 1);
 
-        // Slice the data and labels arrays
-        const trimmedData = data.slice(0, lastNonZeroIndex + 1);
-        const trimmedLabels = xLabels.slice(0, lastNonZeroIndex + 1);
-
-        setUserCounts(trimmedData);
         setLabels(trimmedLabels);
+        setUserCounts(trimmedCounts);
       } catch (error) {
         console.error('Error fetching user counts:', error);
       }
