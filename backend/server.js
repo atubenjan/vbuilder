@@ -1,6 +1,7 @@
+
 /*
 
-const express = require("express");
+const express = require('express');
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -15,10 +16,11 @@ app.use(bodyParser.json());
 
 // Create MySQL connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Steph@0136",
-  database: "vbuilder_quiz_db",
+
+  host: 'localhost',
+  user: '',
+  password: '',
+  database: 'vbuilder_quiz_db',
 });
 
 db.connect((err) => {
@@ -304,6 +306,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
 */
