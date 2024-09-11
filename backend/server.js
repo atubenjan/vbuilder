@@ -1,3 +1,4 @@
+/*
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'Steph@0136',
   database: 'vbuilder_quiz_db',
 });
 
@@ -27,12 +28,11 @@ db.connect((err) => {
   console.log('Connected to database.');
 });
 
-// Route to add users
 app.post('/users', async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, organization, email, password } = req.body;
 
   // Validate the input fields
-  if (!username || !email || !password) {
+  if (!username || !organization || !email || !password) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -47,24 +47,28 @@ app.post('/users', async (req, res) => {
 
   const userId = generateUserId();
 
-  // Insert the new user into the database
+  // Insert the new user into the database, including the organization
   const query =
-    "INSERT INTO users (UserId, Username, Email, Password, Role) VALUES (?, ?, ?, ?, 'user')";
+    "INSERT INTO users (UserId, Username, Organization, Email, Password, Role) VALUES (?, ?, ?, ?, ?, 'user')";
 
-  db.query(query, [userId, username, email, hashedPassword], (err, results) => {
-    if (err) {
-      // Check if email already exists (unique constraint)
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(409).json({ message: 'Email already exists' });
+  db.query(
+    query,
+    [userId, username, organization, email, hashedPassword],
+    (err, results) => {
+      if (err) {
+        // Check if email already exists (unique constraint)
+        if (err.code === 'ER_DUP_ENTRY') {
+          return res.status(409).json({ message: 'Email already exists' });
+        }
+        console.error('Error inserting user:', err);
+        return res.status(500).json({ message: 'Failed to insert user' });
       }
-      console.error('Error inserting user:', err);
-      return res.status(500).json({ message: 'Failed to insert user' });
-    }
 
-    res
-      .status(201)
-      .json({ message: 'User created successfully', UserId: userId });
-  });
+      res
+        .status(201)
+        .json({ message: 'User created successfully', UserId: userId });
+    },
+  );
 });
 
 // Route to handle user login
@@ -291,3 +295,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+*/

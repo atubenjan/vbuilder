@@ -5,6 +5,7 @@ import axios from 'axios';
 const Signup = () => {
   const [user, setUser] = useState({
     username: '',
+    organization: '',
     email: '',
     password: '',
   });
@@ -20,11 +21,14 @@ const Signup = () => {
       setError("Passwords don't match");
       return;
     } else if (user.password.length < 6) {
-      setError('Password must be atleast 6 characters long');
+      setError('Password must be at least 6 characters long');
     }
 
     try {
-      await axios.post('http://localhost:5000/users', user);
+      // Ensure username is stored in lowercase
+      const lowerCaseUser = { ...user, username: user.username.toLowerCase() };
+
+      await axios.post('http://localhost:5000/users', lowerCaseUser);
       alert('User created successfully');
       navigate('/login');
     } catch (err) {
@@ -32,7 +36,7 @@ const Signup = () => {
         setError('Email already exists. Please use a different email.');
       } else {
         setError(
-          'An error occurred during signup. Please try again. ' + err.message,
+          'An error occurred during signup. Please try again. ' + err.message
         );
       }
     }
@@ -41,7 +45,7 @@ const Signup = () => {
   const handleChange = (e) => {
     setUser({
       ...user,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.name === 'username' ? e.target.value.toLowerCase() : e.target.value,
     });
   };
 
@@ -69,12 +73,22 @@ const Signup = () => {
               name="username"
               value={user.username}
               onChange={handleChange}
-              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
-              placeholder=" "
+              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Username"
+              required
             />
-            <label className="absolute text-base text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-0 origin-[0] left-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-              Username
-            </label>
+          </div>
+
+          <div className="relative mb-6">
+            <input
+              type="text"
+              name="organization"
+              value={user.organization}
+              onChange={handleChange}
+              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Organization"
+              required
+            />
           </div>
 
           <div className="relative mb-6">
@@ -83,12 +97,10 @@ const Signup = () => {
               name="email"
               value={user.email}
               onChange={handleChange}
-              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
-              placeholder=" "
+              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Email"
+              required
             />
-            <label className="absolute text-base text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-0 origin-[0] left-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-              Email
-            </label>
           </div>
 
           <div className="relative mb-6">
@@ -97,12 +109,10 @@ const Signup = () => {
               name="password"
               value={user.password}
               onChange={handleChange}
-              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
-              placeholder=" "
+              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Password"
+              required
             />
-            <label className="absolute text-base text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-0 origin-[0] left-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-              Password
-            </label>
           </div>
 
           <div className="relative mb-6">
@@ -110,32 +120,18 @@ const Signup = () => {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 peer"
-              placeholder=" "
+              className="block w-full px-4 py-2 text-base bg-transparent border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+              placeholder="Confirm Password"
+              required
             />
-            <label className="absolute text-base text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-0 origin-[0] left-3.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-              Confirm Password
-            </label>
           </div>
 
-          <div className="flex items-center justify-center">
-            <button
-              type="submit"
-              className="px-10 py-2 text-white rounded-lg hover:bg-slate-300 hover:text-black bg-slate-500"
-            >
-              Sign Up
-            </button>
-          </div>
-          <div className="py-5">
-            Already have an account?
-            <button
-              type="button"
-              className="px-5 py-2 ml-3 rounded-lg hover:bg-slate-500 hover:text-white bg-slate-200"
-              onClick={() => navigate('/login')}
-            >
-              Login
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Sign Up
+          </button>
         </form>
       </div>
     </div>

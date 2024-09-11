@@ -7,7 +7,6 @@ import AiAssistant from '../pages/AiAssistant';
 import QuestionsSetting from '../pages/QuestionsSetting';
 import { ProjectProvider } from '../contexts/ProjectContext';
 import Organization from '../pages/Organization';
-import Analytics from '../pages/Analytics';
 import Subscription from '../pages/Subscription';
 import Logout from '../pages/Logout';
 import Certifications from '../pages/Certifications';
@@ -36,7 +35,6 @@ const AppRoutes = ({ onLogout, role }) => {
                 path="/subscription"
                 element={<Subscription role={role} />}
               />
-              <Route path="/analytics" element={<Analytics role={role} />} />
               <Route
                 path="/aiassistant"
                 element={<AiAssistant role={role} />}
