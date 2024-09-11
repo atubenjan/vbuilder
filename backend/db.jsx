@@ -1,5 +1,4 @@
-/* 
-    //Create database
+/*   //Create database
 CREATE DATABASE vbuilder_quiz_db;
 
     //Use database
@@ -37,4 +36,5 @@ CREATE TABLE IF NOT EXISTS users (
     Role ENUM('admin', 'user','organization') DEFAULT 'user', 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 */
