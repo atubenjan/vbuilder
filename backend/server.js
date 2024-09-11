@@ -1,4 +1,3 @@
-/*
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -15,8 +14,8 @@ app.use(bodyParser.json());
 // Create MySQL connection
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: 'Steph@0136',
+  user: '',
+  password: '',
   database: 'vbuilder_quiz_db',
 });
 
@@ -295,5 +294,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-*/
