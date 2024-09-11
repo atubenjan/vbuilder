@@ -1,6 +1,6 @@
 <?php
 ob_start();
-session_start(); 
+session_start();
 error_reporting(1);
 date_default_timezone_set('Africa/Nairobi');
 $dtime = date("Y-m-d H:i:s A", time());
@@ -10,381 +10,387 @@ $today = date("Y-m-d");
 $api_key = "TQx3th8uR2R8I8o8858HUos2f37c81Smw1I0DQ470a7b3rk4E3U33GN5cm7L3AHz";
 // require_once('mailer.php');
 
-defined ("APP_DIR") or define("APP_DIR","");
-defined ("DB_URL") or define("DB_URL", $_SERVER['HTTP_HOST']);
-defined ("DS") or define("DS", DIRECTORY_SEPARATOR);
-defined ("BASE_URL") or define("BASE_URL", $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME']);
+defined("APP_DIR") or define("APP_DIR", "");
+defined("DB_URL") or define("DB_URL", $_SERVER['HTTP_HOST']);
+defined("DS") or define("DS", DIRECTORY_SEPARATOR);
+defined("BASE_URL") or define("BASE_URL", $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME']);
 
-switch(DB_URL){
+switch (DB_URL) {
 	case 'localhost':
-		defined ("DB_SERVER") or define("DB_SERVER", 'localhost');
-		defined ("DB_USER") or define("DB_USER", "root");
-		defined ("DB_PASS") or define("DB_PASS", "");
-		defined ("DB_NAME") or define("DB_NAME", "lsk_db");
-		defined ("SITE_URL") or define("SITE_URL", 'http://localhost/lskauthfinal');
-	break;
+		defined("DB_SERVER") or define("DB_SERVER", 'localhost');
+		defined("DB_USER") or define("DB_USER", "root");
+		defined("DB_PASS") or define("DB_PASS", "");
+		defined("DB_NAME") or define("DB_NAME", "lsk_db");
+		defined("SITE_URL") or define("SITE_URL", 'http://localhost/lskauthfinal');
+		break;
 
-	case 'https://dandqmealplan.services/': 
-		defined ("DB_SERVER") or define("DB_SERVER", 'localhost');
-		defined ("DB_USER") or define("DB_USER", "lcdavid07_lsk");
-		defined ("DB_PASS") or define("DB_PASS", "6wV81hZOb=");
-		defined ("DB_NAME") or define("DB_NAME", "lcdavid07_lsk");
-		defined ("SITE_URL") or define("SITE_URL", "https://dandqmealplan.services/");
-	
-	break;
+	case 'https://dandqmealplan.services/':
+		defined("DB_SERVER") or define("DB_SERVER", 'localhost');
+		defined("DB_USER") or define("DB_USER", "lcdavid07_lsk");
+		defined("DB_PASS") or define("DB_PASS", "6wV81hZOb=");
+		defined("DB_NAME") or define("DB_NAME", "lcdavid07_lsk");
+		defined("SITE_URL") or define("SITE_URL", "https://dandqmealplan.services/");
 
-	default: 
-		defined ("DB_SERVER") or define("DB_SERVER", 'localhost');
-		defined ("DB_USER") or define("DB_USER", "lcdavid07_lsk");
-		defined ("DB_PASS") or define("DB_PASS", "6wV81hZOb=");
-		defined ("DB_NAME") or define("DB_NAME", "lcdavid07_lsk");
-		defined ("SITE_URL") or define("SITE_URL", "https://dandqmealplan.services/");
-	
-	}
-	
- try{
-	$dbh = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_NAME, DB_USER, DB_PASS, array(PDO::ATTR_PERSISTENT => true)); 
+		break;
+
+	default:
+		defined("DB_SERVER") or define("DB_SERVER", 'localhost');
+		defined("DB_USER") or define("DB_USER", "lcdavid07_lsk");
+		defined("DB_PASS") or define("DB_PASS", "6wV81hZOb=");
+		defined("DB_NAME") or define("DB_NAME", "lcdavid07_lsk");
+		defined("SITE_URL") or define("SITE_URL", "https://dandqmealplan.services/");
+}
+
+try {
+	$dbh = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USER, DB_PASS, array(PDO::ATTR_PERSISTENT => true));
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-	}
-
-catch(PDOException $e){
-	echo $e->getMessage(); 
+} catch (PDOException $e) {
+	echo $e->getMessage();
 }
 
-function getUploadUrl($file){
-	return "uploads/".$file;
+function getUploadUrl($file)
+{
+	return "uploads/" . $file;
 }
 
-function redirect_page($url){
+function redirect_page($url)
+{
 	header("Location: {$url}");
 	exit;
 }
 
-function log_message($msg=NULL){
-	if(!empty($msg)){
+function log_message($msg = NULL)
+{
+	if (!empty($msg)) {
 		$_SESSION['msg'] = $msg;
-	}else{
+	} else {
 		$val = $_SESSION['msg'];
 		$_SESSION['msg'] = '';
 		return $val;
 	}
 }
 
-function Batch($numAlpha=8,$numNonAlpha=2){
-   $listAlpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-   return str_shuffle(
-      substr(str_shuffle($listAlpha),0,$numAlpha)
-    );
+function Batch($numAlpha = 8, $numNonAlpha = 2)
+{
+	$listAlpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	return str_shuffle(
+		substr(str_shuffle($listAlpha), 0, $numAlpha)
+	);
 }
-function getCode(){
+function getCode()
+{
 	//$st = Batch($num=5,$alt=2);
-	$st = rand(1000000,99999999);
+	$st = rand(1000000, 99999999);
 	return $st;
 }
 
-function process_curl($data){
+function process_curl($data)
+{
 	global $api_url;
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-	  CURLOPT_URL => $api_url,
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => '',
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 0,
-	  CURLOPT_FOLLOWLOCATION => true,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => 'POST',
-	  CURLOPT_POSTFIELDS => json_encode($data),
-	  CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+		CURLOPT_URL => $api_url,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => '',
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => 'POST',
+		CURLOPT_POSTFIELDS => json_encode($data),
+		CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
 	));
 	$response = curl_exec($curl);
 	curl_close($curl);
 	return $response;
 }
 
-function getWeek(){
-	$result = date('Y-m-d',strtotime("-7 days"));
+function getWeek()
+{
+	$result = date('Y-m-d', strtotime("-7 days"));
 	return $result;
 }
 
-function monthly(){
-	$result = date('Y-m-d',strtotime("-30 days"));
+function monthly()
+{
+	$result = date('Y-m-d', strtotime("-30 days"));
 	return $result;
 }
 
-// get monthy dates 
-function getMonth(){
-	$result = date('Y-m-d',strtotime("+30 days"));
+// get monthly dates 
+function getMonth()
+{
+	$result = date('Y-m-d', strtotime("+30 days"));
 	return $result;
 }
 
 // calcuate extra days 
-function getExtra(){
-	$result = date('Y-m-d',strtotime("+33 days"));
+function getExtra()
+{
+	$result = date('Y-m-d', strtotime("+33 days"));
 	return $result;
 }
 
 // calcuate new date 
-function get_next($day){
+function get_next($day)
+{
 	$result = date('Y-m-d', strtotime("+$day days"));
 	return $result;
-
 }
 
-function convert_date($date){
+function convert_date($date)
+{
 	$result = date('d-m-Y', strtotime($date));
 	return $result;
 }
 
-function calcDays($start, $end){
-	$start_date = strtotime($start); 
-	$end_date = strtotime($end); 
-	return ($end_date - $start_date)/60/60/24;
-
+function calcDays($start, $end)
+{
+	$start_date = strtotime($start);
+	$end_date = strtotime($end);
+	return ($end_date - $start_date) / 60 / 60 / 24;
 }
 
-function dbDelete ($tbl='',$field='',$id=''){
+function dbDelete($tbl = '', $field = '', $id = '')
+{
 	global $dbh;
-	if($tbl!='' && $field!='' && $id!=''){
-		$sql = 'DELETE FROM '.$tbl.' WHERE '.$field.' = '.$id. '';
+	if ($tbl != '' && $field != '' && $id != '') {
+		$sql = 'DELETE FROM ' . $tbl . ' WHERE ' . $field . ' = ' . $id . '';
 		return $dbh->exec($sql);
 	} else {
 		return NULL;
 	}
 }
 
-function dbCreate($sql=''){
+function dbCreate($sql = '')
+{
 	global $dbh;
-	if($sql ==''){
+	if ($sql == '') {
 		return -9;
-	}else {
+	} else {
 		$q = $dbh->prepare($sql);
 		return  $q->execute();
 	}
 }
 
-function dbSQL($q=''){
+function dbSQL($q = '')
+{
 	global $dbh;
-	if(empty($q)) return FALSE;
+	if (empty($q)) return FALSE;
 	$r = $dbh->prepare($q);
 	$r->execute();
 	$results = array();
-	while($row = $r->fetch(PDO::FETCH_OBJ)){
+	while ($row = $r->fetch(PDO::FETCH_OBJ)) {
 		$results[] = $row;
 	}
 	return $results;
 }
 
-function dbRow($query=''){
+function dbRow($query = '')
+{
 	global $dbh;
 	$r = $dbh->prepare($query);
 	$r->execute();
 	return $r->fetch(PDO::FETCH_OBJ);
 }
 
-function dbOne($query='', $field=''){
+function dbOne($query = '', $field = '')
+{
 	global $dbh;
 	$r = dbRow($query);
-	return $r? $r->$field:NULL;
+	return $r ? $r->$field : NULL;
 }
 
-function get_url(){
-	$current = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);  
-    $result = explode('.', $current)[0];
+function get_url()
+{
+	$current = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
+	$result = explode('.', $current)[0];
 	return $result;
 }
 
-function convert_number_to_words($number) {
-    $hyphen      = '-';
-    $conjunction = ' and ';
-    $separator   = ', ';
-    $negative    = 'negative ';
-    $decimal     = ' point ';
-    $dictionary  = array(
+function convert_number_to_words($number)
+{
+	$hyphen      = '-';
+	$conjunction = ' and ';
+	$separator   = ', ';
+	$negative    = 'negative ';
+	$decimal     = ' point ';
+	$dictionary  = array(
 
-        0                   => 'Zero',
+		0                   => 'Zero',
 
-        1                   => 'One',
+		1                   => 'One',
 
-        2                   => 'Two',
+		2                   => 'Two',
 
-        3                   => 'Three',
+		3                   => 'Three',
 
-        4                   => 'Four',
+		4                   => 'Four',
 
-        5                   => 'Five',
+		5                   => 'Five',
 
-        6                   => 'Six',
+		6                   => 'Six',
 
-        7                   => 'Seven',
+		7                   => 'Seven',
 
-        8                   => 'Eight',
+		8                   => 'Eight',
 
-        9                   => 'Nine',
+		9                   => 'Nine',
 
-        10                  => 'Ten',
+		10                  => 'Ten',
 
-        11                  => 'Eleven',
+		11                  => 'Eleven',
 
-        12                  => 'Twelve',
+		12                  => 'Twelve',
 
-        13                  => 'Thirteen',
+		13                  => 'Thirteen',
 
-        14                  => 'Fourteen',
+		14                  => 'Fourteen',
 
-        15                  => 'Fifteen',
+		15                  => 'Fifteen',
 
-        16                  => 'Sixteen',
+		16                  => 'Sixteen',
 
-        17                  => 'Seventeen',
+		17                  => 'Seventeen',
 
-        18                  => 'Eighteen',
+		18                  => 'Eighteen',
 
-        19                  => 'Nineteen',
+		19                  => 'Nineteen',
 
-        20                  => 'Twenty',
+		20                  => 'Twenty',
 
-        30                  => 'Thirty',
+		30                  => 'Thirty',
 
-        40                  => 'Fourty',
+		40                  => 'Fourty',
 
-        50                  => 'Fifty',
+		50                  => 'Fifty',
 
-        60                  => 'Sixty',
+		60                  => 'Sixty',
 
-        70                  => 'Seventy',
+		70                  => 'Seventy',
 
-        80                  => 'Eighty',
+		80                  => 'Eighty',
 
-        90                  => 'Ninety',
+		90                  => 'Ninety',
 
-        100                 => 'Hundred',
+		100                 => 'Hundred',
 
-        1000                => 'Thousand',
+		1000                => 'Thousand',
 
-        1000000             => 'Million',
+		1000000             => 'Million',
 
-        1000000000          => 'Billion',
+		1000000000          => 'Billion',
 
-        1000000000000       => 'Trillion',
+		1000000000000       => 'Trillion',
 
-        1000000000000000    => 'Quadrillion',
+		1000000000000000    => 'Quadrillion',
 
-        1000000000000000000 => 'Quintillion'
+		1000000000000000000 => 'Quintillion'
 
-    );
+	);
 
-    if (!is_numeric($number)) {
+	if (!is_numeric($number)) {
 
-        return false;
+		return false;
+	}
 
-    }
+	if (($number >= 0 && (int) $number < 0) || (int) $number < 0 - PHP_INT_MAX) {
 
-    if (($number >= 0 && (int) $number < 0) || (int) $number < 0 - PHP_INT_MAX) {
+		// overflow
 
-        // overflow
+		trigger_error(
 
-        trigger_error(
+			'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX,
 
-            'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX,
+			E_USER_WARNING
 
-            E_USER_WARNING
+		);
 
-        );
+		return false;
+	}
 
-        return false;
+	if ($number < 0) {
 
-    }
+		return $negative . convert_number_to_words(abs($number));
+	}
 
-    if ($number < 0) {
+	$string = $fraction = null;
 
-        return $negative . convert_number_to_words(abs($number));
+	if (strpos($number, '.') !== false) {
 
-    }
+		list($number, $fraction) = explode('.', $number);
+	}
 
-    $string = $fraction = null;
+	switch (true) {
 
-    if (strpos($number, '.') !== false) {
+		case $number < 21:
 
-        list($number, $fraction) = explode('.', $number);
+			$string = $dictionary[$number];
 
-    }
+			break;
 
-    switch (true) {
+		case $number < 100:
 
-        case $number < 21:
+			$tens   = ((int) ($number / 10)) * 10;
 
-            $string = $dictionary[$number];
+			$units  = $number % 10;
 
-            break;
+			$string = $dictionary[$tens];
 
-        case $number < 100:
+			if ($units) {
 
-            $tens   = ((int) ($number / 10)) * 10;
+				$string .= $hyphen . $dictionary[$units];
+			}
 
-            $units  = $number % 10;
+			break;
 
-            $string = $dictionary[$tens];
+		case $number < 1000:
 
-            if ($units) {
+			$hundreds  = $number / 100;
 
-                $string .= $hyphen . $dictionary[$units];
+			$remainder = $number % 100;
 
-            }
+			$string = $dictionary[$hundreds] . ' ' . $dictionary[100];
 
-            break;
+			if ($remainder) {
 
-        case $number < 1000:
+				$string .= $conjunction . convert_number_to_words($remainder);
+			}
 
-            $hundreds  = $number / 100;
+			break;
 
-            $remainder = $number % 100;
+		default:
 
-            $string = $dictionary[$hundreds] . ' ' . $dictionary[100];
+			$baseUnit = pow(1000, floor(log($number, 1000)));
 
-            if ($remainder) {
+			$numBaseUnits = (int) ($number / $baseUnit);
 
-                $string .= $conjunction . convert_number_to_words($remainder);
+			$remainder = $number % $baseUnit;
 
-            }
+			$string = convert_number_to_words($numBaseUnits) . ' ' . $dictionary[$baseUnit];
 
-            break;
+			if ($remainder) {
 
-        default:
+				$string .= $remainder < 100 ? $conjunction : $separator;
 
-            $baseUnit = pow(1000, floor(log($number, 1000)));
+				$string .= convert_number_to_words($remainder);
+			}
 
-            $numBaseUnits = (int) ($number / $baseUnit);
+			break;
+	}
 
-            $remainder = $number % $baseUnit;
-
-            $string = convert_number_to_words($numBaseUnits) . ' ' . $dictionary[$baseUnit];
-
-            if ($remainder) {
-
-                $string .= $remainder < 100 ? $conjunction : $separator;
-
-                $string .= convert_number_to_words($remainder);
-
-            }
-
-            break;
-
-    }
-
-    if (null !== $fraction && is_numeric($fraction)) {
-        $string .= $decimal;
-        $words = array();
-        foreach (str_split((string) $fraction) as $number) {
-            $words[] = $dictionary[$number];
-        }
-        $string .= implode(' ', $words);
-    }
-    return $string;
+	if (null !== $fraction && is_numeric($fraction)) {
+		$string .= $decimal;
+		$words = array();
+		foreach (str_split((string) $fraction) as $number) {
+			$words[] = $dictionary[$number];
+		}
+		$string .= implode(' ', $words);
+	}
+	return $string;
 }
 
-$countries = array
-(
+$countries = array(
 	'AF' => 'Afghanistan',
 	'AX' => 'Aland Islands',
 	'AL' => 'Albania',
@@ -632,31 +638,35 @@ $countries = array
 	'ZW' => 'Zimbabwe',
 );
 
-function get_countries($countries){
+function get_countries($countries)
+{
 	$arr = array();
-	foreach($countries as $k => $value){
+	foreach ($countries as $k => $value) {
 		array_push($arr, $value);
 	}
 	return $arr;
 }
-function truncate($text, $chars = 25) {
-    $text = $text." ";
-    $text = substr($text,0,$chars);
-    $text = substr($text,0,strrpos($text,' '));
-    $text = $text."..."; // Si no se desea tener tres puntos suspensivos se comenta esta línea.
-    return $text;
+function truncate($text, $chars = 25)
+{
+	$text = $text . " ";
+	$text = substr($text, 0, $chars);
+	$text = substr($text, 0, strrpos($text, ' '));
+	$text = $text . "..."; // Si no se desea tener tres puntos suspensivos se comenta esta línea.
+	return $text;
 }
 
-function phone_code($code, $phone){
-  if ($phone[0] == "0") {
-    return $code.ltrim($phone, $phone[0]);
-  }else{
-    return $code.$phone;
-  }
+function phone_code($code, $phone)
+{
+	if ($phone[0] == "0") {
+		return $code . ltrim($phone, $phone[0]);
+	} else {
+		return $code . $phone;
+	}
 }
 
- // Sanitize Inputs
-function test_input($data) {
+// Sanitize Inputs
+function test_input($data)
+{
 	$data = strip_tags($data);
 	$data = htmlspecialchars($data);
 	$data = stripslashes($data);
@@ -664,100 +674,91 @@ function test_input($data) {
 	return $data;
 }
 
-function get_time_difference_php($created_time){
-    date_default_timezone_set('Africa/Kampala'); //Change as per your default time
-    $str = strtotime($created_time);
-    $today = strtotime(date('Y-m-d H:i:s'));
+function get_time_difference_php($created_time)
+{
+	date_default_timezone_set('Africa/Kampala'); //Change as per your default time
+	$str = strtotime($created_time);
+	$today = strtotime(date('Y-m-d H:i:s'));
 
-    // It returns the time difference in Seconds...
-    $time_differnce = $today-$str;
+	// It returns the time difference in Seconds...
+	$time_differnce = $today - $str;
 
-    // To Calculate the time difference in Years...
-    $years = 60*60*24*365;
+	// To Calculate the time difference in Years...
+	$years = 60 * 60 * 24 * 365;
 
-    // To Calculate the time difference in Months...
-    $months = 60*60*24*30;
+	// To Calculate the time difference in Months...
+	$months = 60 * 60 * 24 * 30;
 
-    // To Calculate the time difference in Days...
-    $days = 60*60*24;
+	// To Calculate the time difference in Days...
+	$days = 60 * 60 * 24;
 
-    // To Calculate the time difference in Hours...
-    $hours = 60*60;
+	// To Calculate the time difference in Hours...
+	$hours = 60 * 60;
 
-    // To Calculate the time difference in Minutes...
-    $minutes = 60;
+	// To Calculate the time difference in Minutes...
+	$minutes = 60;
 
-    if(intval($time_differnce/$years) > 1)
-    {
-        return intval($time_differnce/$years)." years ago";
-    }else if(intval($time_differnce/$years) > 0)
-    {
-        return intval($time_differnce/$years)." year ago";
-    }else if(intval($time_differnce/$months) > 1)
-    {
-        return intval($time_differnce/$months)." months ago";
-    }else if(intval(($time_differnce/$months)) > 0)
-    {
-        return intval(($time_differnce/$months))." month ago";
-    }else if(intval(($time_differnce/$days)) > 1)
-    {
-        return intval(($time_differnce/$days))." days ago";
-    }else if (intval(($time_differnce/$days)) > 0) 
-    {
-        return intval(($time_differnce/$days))." day ago";
-    }else if (intval(($time_differnce/$hours)) > 1) 
-    {
-        return intval(($time_differnce/$hours))." hours ago";
-    }else if (intval(($time_differnce/$hours)) > 0) 
-    {
-        return intval(($time_differnce/$hours))." hour ago";
-    }else if (intval(($time_differnce/$minutes)) > 1) 
-    {
-        return intval(($time_differnce/$minutes))." minutes ago";
-    }else if (intval(($time_differnce/$minutes)) > 0) 
-    {
-        return intval(($time_differnce/$minutes))." minute ago";
-    }else if (intval(($time_differnce)) > 1) 
-    {
-        return intval(($time_differnce))." seconds ago";
-    }else
-    {
-        return "few seconds ago";
-    }
-  }
+	if (intval($time_differnce / $years) > 1) {
+		return intval($time_differnce / $years) . " years ago";
+	} else if (intval($time_differnce / $years) > 0) {
+		return intval($time_differnce / $years) . " year ago";
+	} else if (intval($time_differnce / $months) > 1) {
+		return intval($time_differnce / $months) . " months ago";
+	} else if (intval(($time_differnce / $months)) > 0) {
+		return intval(($time_differnce / $months)) . " month ago";
+	} else if (intval(($time_differnce / $days)) > 1) {
+		return intval(($time_differnce / $days)) . " days ago";
+	} else if (intval(($time_differnce / $days)) > 0) {
+		return intval(($time_differnce / $days)) . " day ago";
+	} else if (intval(($time_differnce / $hours)) > 1) {
+		return intval(($time_differnce / $hours)) . " hours ago";
+	} else if (intval(($time_differnce / $hours)) > 0) {
+		return intval(($time_differnce / $hours)) . " hour ago";
+	} else if (intval(($time_differnce / $minutes)) > 1) {
+		return intval(($time_differnce / $minutes)) . " minutes ago";
+	} else if (intval(($time_differnce / $minutes)) > 0) {
+		return intval(($time_differnce / $minutes)) . " minute ago";
+	} else if (intval(($time_differnce)) > 1) {
+		return intval(($time_differnce)) . " seconds ago";
+	} else {
+		return "few seconds ago";
+	}
+}
 
-function validate_token($token){
+function validate_token($token)
+{
 	global $dbh;
 	$result = dbRow("SELECT * FROM tokens WHERE content = '$token' ");
 	if ($result) {
 		return "true";
-	}else{
+	} else {
 		return "false";
 	}
 }
 
-function send_sms_yoola_api($phone, $message){
+function send_sms_yoola_api($phone, $message)
+{
 	$arr = array(
-	"api_key" => "TQx3th8uR2R8I8o8858HUos2f37c81Smw1I0DQ470a7b3rk4E3U33GN5cm7L3AHz",
-    "phone" => $phone,
-    "message" => $message
+		"api_key" => "TQx3th8uR2R8I8o8858HUos2f37c81Smw1I0DQ470a7b3rk4E3U33GN5cm7L3AHz",
+		"phone" => $phone,
+		"message" => $message
 	);
-	
+
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-	  CURLOPT_URL => 'https://yoolasms.com/api/v1/send',
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => '',
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 0,
-	  CURLOPT_FOLLOWLOCATION => true,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => 'POST',
-	  CURLOPT_POSTFIELDS => json_encode($arr),
-	  CURLOPT_HTTPHEADER => array(
-	    'Content-Type: application/json',
-	    'Cookie: PHPSESSID=98ee89b975fbb39aafef5960529f53e2'
-	  ),
+		CURLOPT_URL => 'https://yoolasms.com/api/v1/send',
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => '',
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => 'POST',
+		CURLOPT_POSTFIELDS => json_encode($arr),
+		CURLOPT_HTTPHEADER => array(
+			'Content-Type: application/json',
+			'Cookie: PHPSESSID=98ee89b975fbb39aafef5960529f53e2'
+		),
 	));
 
 	$response = curl_exec($curl);
@@ -765,52 +766,52 @@ function send_sms_yoola_api($phone, $message){
 	return $response;
 }
 
-function SendSMS($username, $password, $sender, $number, $message) {
-    $url = "www.egosms.co/api/v1/plain/?";
+function SendSMS($username, $password, $sender, $number, $message)
+{
+	$url = "www.egosms.co/api/v1/plain/?";
 
-    $parameters = "number=[number]&message=[message]&username=[username]&password=[password]&sender=[sender]";
-    $parameters = str_replace("[message]", urlencode($message) , $parameters);
-    $parameters = str_replace("[sender]", urlencode($sender) , $parameters);
-    $parameters = str_replace("[number]", urlencode($number) , $parameters);
-    $parameters = str_replace("[username]", urlencode($username) , $parameters);
-    $parameters = str_replace("[password]", urlencode($password) , $parameters);
-    $live_url = "https://" . $url . $parameters;
-    $parse_url = file($live_url);
-    $response = $parse_url[0];
-    return $response;
+	$parameters = "number=[number]&message=[message]&username=[username]&password=[password]&sender=[sender]";
+	$parameters = str_replace("[message]", urlencode($message), $parameters);
+	$parameters = str_replace("[sender]", urlencode($sender), $parameters);
+	$parameters = str_replace("[number]", urlencode($number), $parameters);
+	$parameters = str_replace("[username]", urlencode($username), $parameters);
+	$parameters = str_replace("[password]", urlencode($password), $parameters);
+	$live_url = "https://" . $url . $parameters;
+	$parse_url = file($live_url);
+	$response = $parse_url[0];
+	return $response;
 }
 
-function getIp() {
-    $ip = $_SERVER['REMOTE_ADDR'];
- 
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        $ip = $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    }
- 
-    return $ip;
+function getIp()
+{
+	$ip = $_SERVER['REMOTE_ADDR'];
+
+	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+		$ip = $_SERVER['HTTP_CLIENT_IP'];
+	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	}
+
+	return $ip;
 }
 
-function whatsapp_msg_api($message){
+function whatsapp_msg_api($message)
+{
 	$curl = curl_init();
 
 	curl_setopt_array($curl, array(
-	  CURLOPT_URL => 'http://api.textmebot.com/send.php?recipient=%2B256766356042&apikey=Q1jjSU8DfqTm&text='.$message,
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => '',
-	  CURLOPT_MAXREDIRS => 10,
-	  CURLOPT_TIMEOUT => 0,
-	  CURLOPT_FOLLOWLOCATION => true,
-	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	  CURLOPT_CUSTOMREQUEST => 'GET',
+		CURLOPT_URL => 'http://api.textmebot.com/send.php?recipient=%2B256766356042&apikey=Q1jjSU8DfqTm&text=' . $message,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => '',
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 0,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => 'GET',
 	));
 
 	$response = curl_exec($curl);
 
 	curl_close($curl);
 	return $response;
-
 }
-
-?>

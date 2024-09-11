@@ -11,11 +11,10 @@ import axios from 'axios';
 
 // Define columns for the table
 const columns = [
-  { id: 'id', label: 'User ID', minWidth: 170 },
-  { id: 'username', label: 'User Name', minWidth: 170 },
-  { id: 'organization', label: 'Organization', minWidth: 100 },
-  { id: 'email', label: 'Email', minWidth: 170 },
-  { id: 'role', label: 'Role', minWidth: 100 },
+  { id: 'UserId', label: 'User ID', minWidth: 170 },
+  { id: 'Username', label: 'User Name', minWidth: 170 },
+  { id: 'Email', label: 'Email', minWidth: 170 },
+  { id: 'Role', label: 'Role', minWidth: 100 },
 ];
 
 const UserTable = () => {
@@ -27,11 +26,11 @@ const UserTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assume token is stored in localStorage
+        const token = localStorage.getItem('token'); // Assuming token is stored on login
         const response = await axios.get('http://localhost:5000/users', {
           headers: { 'x-auth-token': token },
         });
-        setRows(response.data);
+        setRows(response.data); // Set the user data to rows
       } catch (error) {
         console.error('Error fetching users:', error);
       }
