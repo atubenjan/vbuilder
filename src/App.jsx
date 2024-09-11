@@ -5,6 +5,7 @@ import { ProjectProvider } from './contexts/ProjectContext';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import LandingPage from './components/LandingPage';
+import logo from './assets/vbuilderlogo.png';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,8 +49,11 @@ const App = () => {
           <Router>
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route path="/signup" element={<SignUp />} />
+              <Route
+                path="/login"
+                element={<Login onLogin={handleLogin} logo={logo} />}
+              />
+              <Route path="/signup" element={<SignUp logo={logo} />} />
             </Routes>
           </Router>
         )}

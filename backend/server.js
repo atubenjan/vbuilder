@@ -1,18 +1,22 @@
+
+/*
+
 const express = require('express');
 const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mysql = require('mysql2');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const mysql = require("mysql2");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = 'VB@2024'; // Replace with your secret key
+const JWT_SECRET = "VB@2024"; // Replace with your secret key
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // Create MySQL connection
 const db = mysql.createConnection({
+
   host: 'localhost',
   user: '',
   password: '',
@@ -21,18 +25,24 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) {
-    console.error('Database connection failed:', err.stack);
+    console.error("Database connection failed:", err.stack);
     return;
   }
-  console.log('Connected to database.');
+  console.log("Connected to database.");
 });
 
-app.post('/users', async (req, res) => {
-  const { username, organization, email, password } = req.body;
+app.post("/users", async (req, res) => {
+  const { username, organization, email, password, role } = req.body;
 
   // Validate the input fields
-  if (!username || !organization || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
+  if (!username || !email || !password || !role) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  if (role === "organization" && !organization) {
+    return res
+      .status(400)
+      .json({ message: "Organization name is required for organizations" });
   }
 
   // Hash the password using bcryptjs
@@ -46,50 +56,52 @@ app.post('/users', async (req, res) => {
 
   const userId = generateUserId();
 
-  // Insert the new user into the database, including the organization
-  const query =
-    "INSERT INTO users (UserId, Username, Organization, Email, Password, Role) VALUES (?, ?, ?, ?, ?, 'user')";
+  // Insert the new user into the database, including the organization (conditionally)
+  const query = `
+    INSERT INTO users (UserId, Username, Organization, Email, Password, Role)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
 
   db.query(
     query,
-    [userId, username, organization, email, hashedPassword],
+    [userId, username, organization, email, hashedPassword, role],
     (err, results) => {
       if (err) {
         // Check if email already exists (unique constraint)
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(409).json({ message: 'Email already exists' });
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({ message: "Email already exists" });
         }
-        console.error('Error inserting user:', err);
-        return res.status(500).json({ message: 'Failed to insert user' });
+        console.error("Error inserting user:", err);
+        return res.status(500).json({ message: "Failed to insert user" });
       }
 
       res
         .status(201)
-        .json({ message: 'User created successfully', UserId: userId });
-    },
+        .json({ message: "User created successfully", UserId: userId });
+    }
   );
 });
 
 // Route to handle user login
-app.post('/login', (req, res) => {
+app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   // Check if email and password are provided
   if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
   // Query the database to find the user by email
-  const query = 'SELECT * FROM users WHERE Email = ?';
+  const query = "SELECT * FROM users WHERE Email = ?";
   db.query(query, [email], async (err, results) => {
     if (err) {
-      console.error('Error retrieving user:', err);
-      return res.status(500).json({ message: 'Server error' });
+      console.error("Error retrieving user:", err);
+      return res.status(500).json({ message: "Server error" });
     }
 
     // If no user is found with the provided email
     if (results.length === 0) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const user = results[0];
@@ -97,7 +109,7 @@ app.post('/login', (req, res) => {
     // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.Password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     // Generate a JWT token
@@ -105,13 +117,13 @@ app.post('/login', (req, res) => {
       { userId: user.UserId, role: user.Role },
       JWT_SECRET,
       {
-        expiresIn: '1h', // Token expires in 1 hour
-      },
+        expiresIn: "1h", // Token expires in 1 hour
+      }
     );
 
     // Respond with the JWT token and user details
     res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
       userId: user.UserId,
       username: user.Username,
@@ -121,13 +133,13 @@ app.post('/login', (req, res) => {
 });
 
 // Route to get all users
-app.get('/users', (req, res) => {
-  const query = 'SELECT * FROM users';
+app.get("/users", (req, res) => {
+  const query = "SELECT * FROM users";
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error retrieving users:', err);
-      return res.status(500).json({ message: 'Failed to retrieve users' });
+      console.error("Error retrieving users:", err);
+      return res.status(500).json({ message: "Failed to retrieve users" });
     }
 
     res.status(200).json(results);
@@ -135,28 +147,28 @@ app.get('/users', (req, res) => {
 });
 
 // Route to add the quiz title and id
-app.post('/quizzes', (req, res) => {
+app.post("/quizzes", (req, res) => {
   const { Title, QuizId } = req.body;
 
   if (!Title || !QuizId) {
-    return res.status(400).json({ message: 'Quiz title and ID are required' });
+    return res.status(400).json({ message: "Quiz title and ID are required" });
   }
 
-  const query = 'INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)';
+  const query = "INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)";
   db.query(query, [Title, QuizId], (err, results) => {
     if (err) {
-      console.error('Error inserting quiz:', err);
-      return res.status(500).json({ message: 'Failed to insert quiz' });
+      console.error("Error inserting quiz:", err);
+      return res.status(500).json({ message: "Failed to insert quiz" });
     }
     res.status(200).json({
-      message: 'Quiz info received successfully!',
+      message: "Quiz info received successfully!",
       QuizId: QuizId,
     });
   });
 });
 
 // Route to count users by month
-app.get('/users/count-by-month', (req, res) => {
+app.get("/users/count-by-month", (req, res) => {
   const query = `
     SELECT
       DATE_FORMAT(created_at, '%b') AS month,
@@ -168,26 +180,26 @@ app.get('/users/count-by-month', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error retrieving user counts by month:', err);
+      console.error("Error retrieving user counts by month:", err);
       return res
         .status(500)
-        .json({ message: 'Failed to retrieve user counts' });
+        .json({ message: "Failed to retrieve user counts" });
     }
 
     // Ensure that all months are represented
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
     const counts = months.map((month) => {
       const row = results.find((r) => r.month === month);
@@ -199,17 +211,17 @@ app.get('/users/count-by-month', (req, res) => {
 });
 
 // Route to add the questions and their answers
-app.post('/questions', (req, res) => {
+app.post("/questions", (req, res) => {
   const { questions, QuizId } = req.body;
 
   if (!questions || !QuizId) {
     return res
       .status(400)
-      .json({ message: 'Questions and quiz ID are required' });
+      .json({ message: "Questions and quiz ID are required" });
   }
 
   const query =
-    'INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD) VALUES ?';
+    "INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD) VALUES ?";
   const values = questions.map((q) => [
     QuizId,
     q.Question,
@@ -223,21 +235,21 @@ app.post('/questions', (req, res) => {
 
   db.query(query, [values], (err) => {
     if (err) {
-      console.error('Error inserting questions:', err);
-      return res.status(500).json({ message: 'Failed to insert questions' });
+      console.error("Error inserting questions:", err);
+      return res.status(500).json({ message: "Failed to insert questions" });
     }
-    res.status(200).json({ message: 'Questions received successfully!' });
+    res.status(200).json({ message: "Questions received successfully!" });
   });
 });
 
 // Route to get all users
-app.get('/questions', (req, res) => {
-  const query = 'SELECT * FROM questions';
+app.get("/questions", (req, res) => {
+  const query = "SELECT * FROM questions";
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error retrieving questions:', err);
-      return res.status(500).json({ message: 'Failed to retrieve questions' });
+      console.error("Error retrieving questions:", err);
+      return res.status(500).json({ message: "Failed to retrieve questions" });
     }
 
     res.status(200).json(results);
@@ -245,7 +257,7 @@ app.get('/questions', (req, res) => {
 });
 
 // Route to get all quizzes
-app.get('/quizzes', (req, res) => {
+app.get("/quizzes", (req, res) => {
   const query = `
     SELECT q.Title, q.QuizId, 
            qs.QuestionId, qs.Question, 
@@ -257,8 +269,8 @@ app.get('/quizzes', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error retrieving quizzes:', err);
-      return res.status(500).json({ message: 'Failed to retrieve quizzes' });
+      console.error("Error retrieving quizzes:", err);
+      return res.status(500).json({ message: "Failed to retrieve quizzes" });
     }
 
     // Group results by quiz
@@ -294,3 +306,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+*/
