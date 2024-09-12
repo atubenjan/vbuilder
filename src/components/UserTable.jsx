@@ -109,7 +109,7 @@ const UserTable = () => {
             Prev
           </button>
           <span>
-            Page {page + 1} of {Math.ceil(rows.length / rowsPerPage)}
+            {page + 1} of {Math.ceil(rows.length / rowsPerPage)}
           </span>
           <button
             onClick={() => handleChangePage(page + 1)}

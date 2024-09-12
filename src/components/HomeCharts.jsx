@@ -51,12 +51,12 @@ const HomeCharts = () => {
     <div className="px-2 pb-10 md:px-4">
       <h1 className="text-lg font-bold">Analytics</h1>
       <div className="items-center justify-between block w-full h-auto grid-cols-1 gap-2 lg:grid lg:grid-cols-2">
-        <div className="pt-2 pl-2 mt-3 bg-white border rounded-lg w-fit h-fit border-slate-600">
+        <div className="pt-2 pl-2 mt-3  border rounded-lg w-fit h-fit border-background">
           <h2>Users</h2>
           <LineChart
             width={window.innerWidth > 768 ? 450 : 300}
             height={window.innerWidth > 768 ? 300 : 200}
-            series={[{ data: userCounts, label: 'Users' }]}
+            series={[{ data: userCounts, label: 'Users', color: '#0d1321' }]}
             xAxis={[{ scaleType: 'point', data: labels }]}
             yAxis={[{ min: 0 }]}
             grid={{ vertical: true, horizontal: true }}

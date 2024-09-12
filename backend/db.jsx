@@ -1,9 +1,7 @@
 /*   
-//Create database
 CREATE DATABASE vbuilder_quiz_db;
 USE vbuilder_quiz_db;
 
-//Create quiz table
 CREATE TABLE quizzes (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- Make id the primary key
 	Title VARCHAR(255) NOT NULL,
@@ -12,7 +10,6 @@ CREATE TABLE quizzes (
     UNIQUE (QuizId) 
 );
 
-//Create questions table
 CREATE TABLE questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     QuizId VARCHAR(255) NOT NULL,
@@ -27,7 +24,6 @@ CREATE TABLE questions (
     FOREIGN KEY (QuizId) REFERENCES quizzes(QuizId) ON DELETE CASCADE
 );
 
-//Create users table
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     UserId VARCHAR(255) NOT NULL,
@@ -38,5 +34,19 @@ CREATE TABLE IF NOT EXISTS users (
     Role ENUM('admin', 'user','organization') DEFAULT 'user', 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    UserId VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    readStatus BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (UserId) REFERENCES users(UserId) ON DELETE CASCADE
+);
+
+-- Add Difficulty and scores column to questions table
+ALTER TABLE questions
+ADD COLUMN Difficulty VARCHAR(20),
+ADD COLUMN Score INT;
 
 */

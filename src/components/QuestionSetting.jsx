@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import AddQuestions from './AddQuestions';
-import AllQuestions from './AllQuestions';
 import QuestionToggleButtons from './QuestionToggleButtons';
+import AddMCQQuestions from './AddMCQQuestions';
+import AllQuestions from './AllQuestions';
 
 const QuestionSetting = ({ role }) => {
-  const [activeTab, setActiveTab] = useState('questionTypes');
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [activeTab, setActiveTab] = useState(() => {
+    switch (role) {
+      case 'admin':
+        return 'questionTypes';
+      case 'organization':
+        return 'addQuestion';
+      case 'user':
+        return 'allQuestions';
+      default:
+        return null;
+    }
+  });
   const [quizzes, setQuizzes] = useState([]);
 
   const addQuizToAllQuestions = (quiz) => {
@@ -17,24 +27,22 @@ const QuestionSetting = ({ role }) => {
     console.log('Attempting quiz:', quiz);
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setUploadedFile(file);
+  useEffect(() => {
+    // Ensure the active tab is reset when the role changes
+    switch (role) {
+      case 'admin':
+        setActiveTab('questionTypes');
+        break;
+      case 'organization':
+        setActiveTab('addQuestion');
+        break;
+      case 'user':
+        setActiveTab('allQuestions');
+        break;
+      default:
+        setActiveTab(null);
     }
-  };
-
-  const handleFileDownload = () => {
-    if (uploadedFile) {
-      const fileURL = URL.createObjectURL(uploadedFile);
-      const link = document.createElement('a');
-      link.href = fileURL;
-      link.download = uploadedFile.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
+  }, [role]);
 
   return (
     <div className="p-4 bg-white rounded-lg">
@@ -50,7 +58,7 @@ const QuestionSetting = ({ role }) => {
             <div className="pb-2">
               <button
                 onClick={() => setActiveTab('questionTypes')}
-                className={`px-4 py-2 rounded-md ${activeTab === 'questionTypes' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+                className={`px-4 py-2 rounded-md ${activeTab === 'questionTypes' ? 'bg-button text-white' : 'bg-gray-200 text-black'}`}
               >
                 Activate Question Type
               </button>
@@ -60,16 +68,8 @@ const QuestionSetting = ({ role }) => {
           <>
             <div className="pb-2">
               <button
-                onClick={() => setActiveTab('uploadFile')}
-                className={`px-4 py-2 rounded-md ${activeTab === 'uploadFile' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
-              >
-                Upload File
-              </button>
-            </div>
-            <div className="pb-2">
-              <button
                 onClick={() => setActiveTab('addQuestion')}
-                className={`px-4 py-2 rounded-md ${activeTab === 'addQuestion' ? 'bg-slate-700 text-white' : 'bg-gray-200 text-black'}`}
+                className={`px-4 py-2 rounded-md ${activeTab === 'addQuestion' ? 'bg-button text-white' : 'bg-gray-200 text-black'}`}
               >
                 Add Questions
               </button>
@@ -85,38 +85,9 @@ const QuestionSetting = ({ role }) => {
       {activeTab === 'questionTypes' && role === 'admin' && (
         <QuestionToggleButtons />
       )}
-      {activeTab === 'uploadFile' && role === 'organization' && (
-        <div className="mt-4">
-          <input
-            type="file"
-            accept=".pdf, .xlsx, .xls, .docx"
-            onChange={handleFileUpload}
-            className="hidden"
-            id="fileUpload"
-          />
-          <label
-            htmlFor="fileUpload"
-            className="px-4 py-2 mb-4 text-white rounded-md cursor-pointer bg-slate-700 hover:bg-slate-400 hover:text-black"
-          >
-            Upload notes
-          </label>
-          <button
-            onClick={handleFileDownload}
-            disabled={!uploadedFile}
-            className="px-4 py-2 mb-4 ml-2 text-white rounded-md bg-slate-700 hover:bg-slate-400 hover:text-black"
-          >
-            Download notes
-          </button>
-        </div>
-      )}
-
       {activeTab === 'addQuestion' && role === 'organization' && (
-        <AddQuestions addQuizToAllQuestions={addQuizToAllQuestions} />
+        <AddMCQQuestions addQuizToAllQuestions={addQuizToAllQuestions} />
       )}
-
-      {/* {activeTab === 'allQuestions' && role === 'user' && (
-        <AllQuestions quizzes={quizzes} onAttemptQuiz={handleAttemptQuiz} />
-      )} */}
     </div>
   );
 };

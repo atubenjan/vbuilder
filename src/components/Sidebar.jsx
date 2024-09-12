@@ -29,13 +29,13 @@ const Sidebar = ({ role }) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-20 h-full text-white bg-gray-800 md:w-60">
+    <div className="fixed top-0 left-0 z-20 h-full text-white md:w-60">
       <div className="relative">
         <button
           className={`absolute z-50 text-xl rounded-full bg-transparent ${
             isOpen
-              ? 'text-black top-2 left-[215px] border border-slate-700 bg-white p-2'
-              : 'top-4 left-72 text-white'
+              ? 'text-icon top-2 left-[215px] border border-icon bg-background p-2'
+              : 'top-5 left-72 text-icon'
           } md:hidden`}
           onClick={toggleSidebar}
         >
@@ -44,7 +44,7 @@ const Sidebar = ({ role }) => {
       </div>
 
       <div
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform transform ${
+        className={`fixed top-0 left-0 h-full bg-background text-white transition-transform transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:relative md:block`}
       >
@@ -60,8 +60,8 @@ const Sidebar = ({ role }) => {
         <nav className="flex flex-col gap-1 px-4">
           <Link
             to="/home"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/' ? 'bg-gray-700' : ''
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+              activeLink === '/' ? 'bg-button' : ''
             }`}
             onClick={() => handleLinkClick('/')}
           >
@@ -74,18 +74,28 @@ const Sidebar = ({ role }) => {
             <>
               <Link
                 to="/questions"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/questions' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/questions')}
               >
                 <FaRegQuestionCircle />
-                <span>Questions Setting</span>
+                <span>Questions</span>
+              </Link>
+              <Link
+                to="/organization"
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/organization' ? 'bg-button' : ''
+                }`}
+                onClick={() => handleLinkClick('/organization')}
+              >
+                <RiOrganizationChart />
+                <span>Organization</span>
               </Link>
               <Link
                 to="/certifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/certifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/certifications')}
               >
@@ -94,8 +104,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/notifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/notifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/notifications')}
               >
@@ -110,8 +120,8 @@ const Sidebar = ({ role }) => {
             <>
               <Link
                 to="/users"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/users' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/users' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/users')}
               >
@@ -120,8 +130,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/questions"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/questions' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/questions')}
               >
@@ -130,8 +140,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/organization"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/organization' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/organization' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/organization')}
               >
@@ -140,8 +150,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/subscription"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/subscription' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/subscription' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/subscription')}
               >
@@ -150,8 +160,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/aiassistant"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/aiassistant' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/aiassistant' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/aiassistant')}
               >
@@ -160,8 +170,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/certifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/certifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/certifications')}
               >
@@ -170,8 +180,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/notifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/notifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/notifications')}
               >
@@ -185,8 +195,8 @@ const Sidebar = ({ role }) => {
             <>
               <Link
                 to="/users"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/users' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/users' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/users')}
               >
@@ -195,8 +205,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/questions"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/questions' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/questions' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/questions')}
               >
@@ -205,8 +215,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/organization"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/organization' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/organization' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/organization')}
               >
@@ -215,8 +225,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/certifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/certifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/certifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/certifications')}
               >
@@ -225,8 +235,8 @@ const Sidebar = ({ role }) => {
               </Link>
               <Link
                 to="/notifications"
-                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-                  activeLink === '/notifications' ? 'bg-gray-700' : ''
+                className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+                  activeLink === '/notifications' ? 'bg-button' : ''
                 }`}
                 onClick={() => handleLinkClick('/notifications')}
               >
@@ -237,8 +247,8 @@ const Sidebar = ({ role }) => {
           )}
           <Link
             to="/logout"
-            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-gray-700 ${
-              activeLink === '/logout' ? 'bg-gray-700' : ''
+            className={`flex items-center gap-4 px-4 py-2 rounded-md hover:bg-button ${
+              activeLink === '/logout' ? 'bg-button' : ''
             }`}
             onClick={() => handleLinkClick('/logout')}
           >

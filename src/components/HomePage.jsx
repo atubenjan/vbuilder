@@ -13,7 +13,7 @@ const HomePage = () => {
 
   return (
     <div className="px-2 md:px-3 p-3 pt-20">
-      <div className="w-full h-fit flex justify-between items-center rounded-lg bg-slate-800">
+      <div className="w-full h-fit flex justify-between items-center rounded-lg bg-background">
         <div className="text-white p-3 w-full md:w-4/5 text-center">
           <h2 className="text-2xl md:text-4xl text-center">
             Welcome back to Vbuilder Quizzes, {userName}

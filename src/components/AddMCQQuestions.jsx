@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
 
-const AddQuestions = () => {
+const AddMCQQuestions = () => {
   const [quizTitle, setQuizTitle] = useState('');
-  const [quizId, setQuizId] = useState('');
-  const [questionId, setQuestionId] = useState('');
   const [numQuestionsInput, setNumQuestionsInput] = useState('');
   const [numQuestions, setNumQuestions] = useState('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [isReviewStep, setIsReviewStep] = useState(false);
   const [showNumQuestionsInput, setShowNumQuestionsInput] = useState(false);
-
+  const [isQuizTitleStepCompleted, setIsQuizTitleStepCompleted] =
+    useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [file, setFile] = useState(null);
   const [questionData, setQuestionData] = useState({
     Question: '',
     OptionA: '',
@@ -19,29 +21,9 @@ const AddQuestions = () => {
     OptionC: '',
     OptionD: '',
     CorrectAnswer: '',
+    Difficulty: '',
+    Score: '',
   });
-
-  const [nextQuestionId, setNextQuestionId] = useState(1);
-
-  // Generate random quiz ID
-  useEffect(() => {
-    const generateRandomQuizId = () => {
-      const randomNumber = Math.floor(Math.random() * 999) + 1;
-      const formattedNumber = String(randomNumber).padStart(3, '0');
-      return `VB${formattedNumber}`;
-    };
-    setQuizId(generateRandomQuizId());
-  }, []);
-
-  // Generate random question ID
-  useEffect(() => {
-    const generateRandomQuestionId = () => {
-      const randomNumber = Math.floor(Math.random() * 99999) + 1;
-      const formattedNumber = String(randomNumber).padStart(5, '0');
-      return formattedNumber;
-    };
-    setQuestionId(generateRandomQuestionId());
-  }, []);
 
   const handleChange = (e) => {
     setQuestionData({
@@ -57,16 +39,23 @@ const AddQuestions = () => {
       !questionData.OptionB ||
       !questionData.OptionC ||
       !questionData.OptionD ||
-      !questionData.CorrectAnswer
+      !questionData.CorrectAnswer ||
+      !questionData.Difficulty ||
+      !questionData.Score
     ) {
       alert('Please fill all required fields.');
       return;
     }
 
-    const questionId = nextQuestionId;
-    setNextQuestionId(nextQuestionId + 1);
-
-    setQuestions([...questions, { ...questionData, QuestionId: questionId }]);
+    if (editingIndex !== null) {
+      const updatedQuestions = [...questions];
+      updatedQuestions[editingIndex] = questionData;
+      setQuestions(updatedQuestions);
+      setEditingIndex(null);
+    } else {
+      setQuestions([...questions, questionData]);
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    }
 
     setQuestionData({
       Question: '',
@@ -75,13 +64,19 @@ const AddQuestions = () => {
       OptionC: '',
       OptionD: '',
       CorrectAnswer: '',
+      Difficulty: '',
+      Score: '',
     });
 
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-
-    if (currentQuestionIndex + 1 >= numQuestions) {
+    if (currentQuestionIndex + 1 >= numQuestions && editingIndex === null) {
       setIsReviewStep(true);
     }
+  };
+
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setQuestionData(questions[index]);
+    setIsReviewStep(false);
   };
 
   const handleSubmit = async (e) => {
@@ -90,11 +85,10 @@ const AddQuestions = () => {
     try {
       const quizResponse = await axios.post('http://localhost:5000/quizzes', {
         Title: quizTitle,
-        QuizId: quizId,
       });
 
       if (quizResponse.status === 200) {
-        console.log('Quiz info saved:', quizResponse.data);
+        const quizId = quizResponse.data.QuizId;
 
         const questionsResponse = await axios.post(
           'http://localhost:5000/questions',
@@ -105,7 +99,6 @@ const AddQuestions = () => {
         );
 
         if (questionsResponse.status === 200) {
-          console.log('Questions saved successfully:', questionsResponse.data);
           alert('Quiz and questions saved successfully!');
         } else {
           console.error('Failed to save questions');
@@ -124,20 +117,39 @@ const AddQuestions = () => {
       return;
     }
     setNumQuestions(Number(numQuestionsInput));
-    setShowNumQuestionsInput(false); // Hide the input after confirming
+    setShowNumQuestionsInput(false);
   };
 
   const downloadQuestions = () => {
-    const blob = new Blob([JSON.stringify(questions, null, 2)], {
-      type: 'application/json',
+    const pdf = new jsPDF();
+    let yOffset = 10;
+
+    // Add quiz title
+    pdf.setFontSize(16);
+    pdf.text(`${quizTitle} Quiz`, 10, yOffset);
+    yOffset += 10;
+
+    // Add questions
+    pdf.setFontSize(12);
+    questions.forEach((question, index) => {
+      if (yOffset > 280) {
+        pdf.addPage();
+        yOffset = 10;
+      }
+
+      pdf.text(`Question ${index + 1}: ${question.Question}`, 10, yOffset);
+      yOffset += 10;
+      pdf.text(`A) ${question.OptionA}`, 15, yOffset);
+      yOffset += 5;
+      pdf.text(`B) ${question.OptionB}`, 15, yOffset);
+      yOffset += 5;
+      pdf.text(`C) ${question.OptionC}`, 15, yOffset);
+      yOffset += 5;
+      pdf.text(`D) ${question.OptionD}`, 15, yOffset);
+      yOffset += 7;
     });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'questions.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+
+    pdf.save(`${quizTitle.replace(/\s+/g, '_')}_questions.pdf`);
   };
 
   const handleGoBack = () => {
@@ -145,17 +157,55 @@ const AddQuestions = () => {
     setNumQuestions('');
     setCurrentQuestionIndex(0);
     setQuestions([]);
-    setNextQuestionId(1);
   };
 
   const handleTitleNext = () => {
+    if (!quizTitle) {
+      alert('Please fill the quiz title.');
+      return;
+    }
+    setIsQuizTitleStepCompleted(true);
     setShowNumQuestionsInput(true);
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!file) {
+      alert('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        alert('File uploaded successfully!');
+      } else {
+        alert('Failed to upload file.');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
   };
 
   return (
     <div className="w-full">
       {/* Quiz Title Input */}
-      {!showNumQuestionsInput && (
+      {!isQuizTitleStepCompleted && (
         <div className="mb-4">
           <label className="block mb-2 text-sm font-medium text-gray-900">
             Add MCQs Title:
@@ -167,23 +217,11 @@ const AddQuestions = () => {
             className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
             placeholder="Enter the quiz title"
           />
-
-          {/* Quiz ID Input */}
-          <label className="block mb-2 text-sm font-medium text-gray-900">
-            Quiz ID:
-          </label>
-          <input
-            type="text"
-            value={quizId}
-            readOnly
-            className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
-          />
-
           {quizTitle && (
             <button
               type="button"
               onClick={handleTitleNext}
-              className="px-4 py-2 text-white bg-gray-800 rounded-md"
+              className="px-4 py-2 text-white bg-button rounded-md"
             >
               Next
             </button>
@@ -207,7 +245,7 @@ const AddQuestions = () => {
           <button
             type="button"
             onClick={handleNumQuestionsConfirm}
-            className="px-4 py-2 text-white bg-gray-800 rounded-md"
+            className="px-4 py-2 text-white bg-button rounded-md"
           >
             Next
           </button>
@@ -215,24 +253,50 @@ const AddQuestions = () => {
       )}
 
       {/* Add Question Form */}
-      {quizTitle &&
-        numQuestions > 0 &&
-        currentQuestionIndex < numQuestions &&
+      {numQuestions > 0 &&
+        (currentQuestionIndex < numQuestions || editingIndex !== null) &&
         !isReviewStep && (
           <div className="p-5 border border-gray-200">
             <form>
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">
+                    Difficulty Level:
+                  </label>
+                  <select
+                    name="Difficulty"
+                    value={questionData.Difficulty}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md outline-none"
+                  >
+                    <option value="">Select difficulty</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">
+                    Score:
+                  </label>
+                  <input
+                    type="number"
+                    name="Score"
+                    value={questionData.Score}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md outline-none"
+                    placeholder="Enter score"
+                  />
+                </div>
+              </div>
+
               <label className="block mb-2 text-sm font-medium text-gray-900">
-                Question {currentQuestionIndex + 1}:
+                Question{' '}
+                {editingIndex !== null
+                  ? editingIndex + 1
+                  : currentQuestionIndex + 1}
+                :
               </label>
-              <label className="block mb-2 text-sm font-medium text-gray-900">
-                Question ID:
-              </label>
-              <input
-                type="text"
-                value={questionId}
-                readOnly
-                className="w-full p-2 mb-4 border border-gray-300 rounded-md outline-none"
-              />
               <input
                 type="text"
                 name="Question"
@@ -290,9 +354,9 @@ const AddQuestions = () => {
               <button
                 type="button"
                 onClick={handleSaveQuestion}
-                className="px-4 py-2 text-white bg-gray-800 rounded-md"
+                className="px-4 py-2 text-white bg-button rounded-md"
               >
-                Save Question
+                {editingIndex !== null ? 'Update Question' : 'Save Question'}
               </button>
             </form>
           </div>
@@ -300,90 +364,69 @@ const AddQuestions = () => {
 
       {/* Review Questions */}
       {isReviewStep && (
-        <div className="p-5 border border-gray-200">
+        <div className="p-5 border border-gray-200 rounded-lg">
           <h2 className="mb-4 text-xl font-semibold">Review Questions</h2>
-          <div>
+          <p>Quiz Title: {quizTitle}</p>
+          <div className="mb-2 p-4 border border-gray-300 rounded-md">
             {questions.map((question, index) => (
-              <div key={index} className="mb-2">
-                <p className="font-bold">
-                  Q{index + 1}: {question.Question}
+              <div key={index}>
+                <p>
+                  <strong>Question {index + 1}:</strong> {question.Question}
                 </p>
-                <label>
-                  <input
-                    type="radio"
-                    name={`OptionA`}
-                    value={question.OptionA}
-                    onChange={(e) => {
-                      e.target.value;
-                    }}
-                    className="mr-2"
-                  />
-                  {question.OptionA}
-                </label>
-                <br />
-                <label>
-                  <input
-                    type="radio"
-                    name={`OptionB`}
-                    value={question.OptionB}
-                    onChange={(e) => {
-                      e.target.value;
-                    }}
-                    className="mr-2"
-                  />
-                  {question.OptionB}
-                </label>
-                <br />
-                <label>
-                  <input
-                    type="radio"
-                    name={`OptionC`}
-                    value={question.OptionC}
-                    onChange={(e) => {
-                      e.target.value;
-                    }}
-                    className="mr-2"
-                  />
-                  {question.OptionC}
-                </label>
-                <br />
-                <label>
-                  <input
-                    type="radio"
-                    name={`OptionD`}
-                    value={question.OptionD}
-                    onChange={(e) => {
-                      e.target.value;
-                    }}
-                    className="mr-2"
-                  />
-                  {question.OptionD}
-                </label>
-                <p>Correct Answer: {question.CorrectAnswer}</p>
+                <p>Option A: {question.OptionA}</p>
+                <p>Option B: {question.OptionB}</p>
+                <p>Option C: {question.OptionC}</p>
+                <p>Option D: {question.OptionD}</p>
+                <p>
+                  <strong>Correct Answer:</strong> {question.CorrectAnswer}
+                </p>
+                <p>Difficulty: {question.Difficulty}</p>
+                <p>Score: {question.Score}</p>
+                <button
+                  type="button"
+                  onClick={() => handleEdit(index)}
+                  className="mt-2 px-4 mb-2 py-2 text-white bg-blue-500 rounded-md"
+                >
+                  Edit
+                </button>
               </div>
             ))}
+            <div className="mb-2">
+              <input
+                type="file"
+                accept=".doc,.pdf"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={handleFileUpload}
+                className="px-4 py-2 my-2 text-white bg-button rounded-md"
+              >
+                Upload File
+              </button>
+            </div>
           </div>
-          <div className="flex flex-wrap w-full gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={handleGoBack}
-              className="px-4 py-2 mr-4 text-white bg-gray-800 rounded-md"
+              onClick={handleSubmit}
+              className="px-4 py-2 text-white bg-button rounded-md"
             >
-              Go Back
+              Submit Quiz
             </button>
             <button
               type="button"
               onClick={downloadQuestions}
-              className="px-4 py-2 text-white bg-gray-800 rounded-md"
+              className="px-4 py-2 text-white bg-button rounded-md"
             >
               Download Questions
             </button>
             <button
               type="button"
-              onClick={handleSubmit}
-              className="px-4 py-2 text-white bg-gray-800 rounded-md"
+              onClick={handleGoBack}
+              className="px-4 py-2 text-white bg-button rounded-md"
             >
-              Submit Quiz
+              Add new Quiz
             </button>
           </div>
         </div>
@@ -392,4 +435,4 @@ const AddQuestions = () => {
   );
 };
 
-export default AddQuestions;
+export default AddMCQQuestions;

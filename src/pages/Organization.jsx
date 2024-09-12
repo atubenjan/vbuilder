@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Footer from '../components/Footer';
 import PageTitle from '../components/PageTitle';
-import OrganizationTable from '../components/OrganizationTable';
+// import AddQuestions from '../components/AddQuestions';
+import OrganizationQuestions from '../components/OrganizationQuestions';
 
 const Organization = ({ role }) => {
   return (
@@ -10,8 +11,8 @@ const Organization = ({ role }) => {
       {/* Main content area */}
       <div className="flex-grow bg-slate-200">
         <PageTitle text="Organization" role={role} />
-        <div className="p-4 pt-20 bg-slate-200">
-          <OrganizationTable />
+        <div className="px-4 pt-20 bg-slate-200">
+          <OrganizationQuestions />
         </div>
       </div>
 
