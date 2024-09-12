@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FaQuestionCircle } from 'react-icons/fa';
+import { MdQuiz } from 'react-icons/md';
 
 const HomeSummary = () => {
   const [quizzes, setQuizzes] = useState([]);
@@ -32,19 +33,19 @@ const HomeSummary = () => {
   }, []);
   return (
     <div className="flex flex-col items-stretch justify-between w-full h-full gap-2 mt-5">
-      <div className="flex flex-col items-stretch justify-between w-full h-full p-4 text-white border border-gray-400 rounded-lg bg-slate-800 ">
+      <div className="flex flex-col items-stretch justify-between w-full h-full p-4 text-white border border-gray-400 rounded-lg bg-background ">
         <div className="flex justify-between w-full">
-          <span className="text-4xl">
+          <span className="text-5xl text-icon">
             <FaQuestionCircle />
           </span>
           <span className="text-lg">Questions</span>
         </div>
         <div className="text-4xl text-right">{questions.length}</div>
       </div>
-      <div className="flex flex-col items-stretch justify-between w-full h-full p-4 text-white border border-gray-400 rounded-lg bg-slate-800 ">
+      <div className="flex flex-col items-stretch justify-between w-full h-full p-4 text-white border border-gray-400 rounded-lg bg-background ">
         <div className="flex justify-between w-full">
-          <span className="text-4xl">
-            <FaQuestionCircle />
+          <span className="text-5xl text-icon">
+            <MdQuiz />
           </span>
           <span className="text-lg">Quizzes</span>
         </div>

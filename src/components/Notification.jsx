@@ -1,87 +1,56 @@
-import React, { useState } from 'react';
-import { CiMail } from 'react-icons/ci';
-import { FaHouse } from 'react-icons/fa6';
-
-const initialNotifications = [
-  {
-    id: 1,
-    avatar: 'https://berrydashboard.io/free/assets/user-round-QwaXuEgi.svg',
-    name: 'John Doe',
-    time: '2 min ago',
-    message: 'It is a long established fact that a reader will be distracted',
-    tags: [], // No initial tags
-    tagColors: [],
-  },
-  {
-    id: 2,
-    avatar: 'https://via.placeholder.com/150',
-    icon: <FaHouse />,
-    title: 'Store Verification Done',
-    time: '8 min ago',
-    message: 'We have successfully received your request.',
-    tags: [], // No initial tags
-    tagColors: [],
-  },
-  {
-    id: 3,
-    avatar: 'https://via.placeholder.com/150',
-    icon: <CiMail />,
-    title: 'Check Your Mail',
-    time: '2 min ago',
-    message: "All done! Now check your inbox as you're in for a sweet treat!",
-    tags: [], // No initial tags
-    tagColors: [],
-  },
-  {
-    id: 4,
-    avatar: 'https://berrydashboard.io/free/assets/user-round-QwaXuEgi.svg',
-    name: 'John Doe',
-    time: '2 min ago',
-    message: 'Uploaded two files on 21 Jan 2020',
-    files: ['demo.jpg'],
-    tags: [], // No initial tags
-    tagColors: [],
-  },
-  {
-    id: 5,
-    avatar: 'https://berrydashboard.io/free/assets/user-round-QwaXuEgi.svg',
-    name: 'John Doe',
-    time: '2 min ago',
-    message: 'It is a long established fact that a reader will be distracted',
-    tags: [], // No initial tags
-    tagColors: [],
-  },
-];
-
-const tags = ['All Notifications', 'Unread', 'Read'];
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Notification = () => {
-  const [notifications, setNotifications] = useState(
-    initialNotifications.map((notif) => ({
-      ...notif,
-      tags: ['Unread', 'New'],
-    })),
-  );
+  const [notifications, setNotifications] = useState([]);
   const [selectedTag, setSelectedTag] = useState('All Notifications');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNotification, setCurrentNotification] = useState(null);
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    // Retrieve the user's name from local storage
+    const storedUserId = localStorage.getItem('UserId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
+
+  // Define tags array here
+  const tags = ['All Notifications', 'Unread', 'Read'];
+
+  useEffect(() => {
+    // Replace with actual user ID from context or local storage
+    axios
+      .get(`http://localhost:5000/notifications/${userId}`)
+      .then((response) => {
+        setNotifications(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching notifications:', error);
+      });
+  }, []);
 
   const handleNotificationClick = (id) => {
-    const updatedNotifications = notifications.map((notification) => {
-      if (notification.id === id && notification.tags.includes('Unread')) {
-        return {
-          ...notification,
-          tags: ['Read', 'Old'],
-          tagColors: ['bg-gray-200 text-gray-800'],
-        };
-      }
-      return notification;
-    });
-    setNotifications(updatedNotifications);
-
-    const notification = updatedNotifications.find((notif) => notif.id === id);
-    setCurrentNotification(notification);
-    setIsModalOpen(true);
+    axios
+      .put(`http://localhost:5000/notifications/${id}`)
+      .then(() => {
+        const updatedNotifications = notifications.map((notification) => {
+          if (notification.id === id) {
+            return { ...notification, readStatus: true };
+          }
+          return notification;
+        });
+        setNotifications(updatedNotifications);
+        const notification = updatedNotifications.find(
+          (notif) => notif.id === id,
+        );
+        setCurrentNotification(notification);
+        setIsModalOpen(true);
+      })
+      .catch((error) => {
+        console.error('Error updating notification status:', error);
+      });
   };
 
   const closeModal = () => {
@@ -92,7 +61,9 @@ const Notification = () => {
     selectedTag === 'All Notifications'
       ? notifications
       : notifications.filter((notification) =>
-          notification.tags.includes(selectedTag),
+          selectedTag === 'Unread'
+            ? !notification.read_status
+            : notification.read_status,
         );
 
   return (
@@ -119,54 +90,23 @@ const Notification = () => {
         {filteredNotifications.map((notification) => (
           <li
             key={notification.id}
-            className={`p-4 cursor-pointer ${notification.tags.includes('Read') ? 'bg-white' : 'bg-gray-100'}`}
+            className={`p-4 cursor-pointer ${notification.read_status ? 'bg-white' : 'bg-gray-100'}`}
             onClick={() => handleNotificationClick(notification.id)}
           >
             <div className="flex items-start">
               <img
-                src={notification.avatar}
-                alt={notification.name || notification.title}
+                src="https://via.placeholder.com/150"
+                alt="User Avatar"
                 className="w-10 h-10 rounded-full mr-4"
               />
               <div className="flex-grow">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-medium">
-                    {notification.name || notification.title}
-                  </h4>
+                  <h4 className="text-sm font-medium">Notification</h4>
                   <span className="text-xs text-gray-500">
-                    {notification.time}
+                    {new Date(notification.created_at).toLocaleTimeString()}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">{notification.message}</p>
-                {notification.tags && (
-                  <div className="mt-2 flex space-x-2">
-                    {notification.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${notification.tagColors[index]}`}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {notification.buttonLabel && (
-                  <button className="mt-2 bg-blue-500 text-white px-3 py-1 text-xs rounded-full">
-                    {notification.buttonLabel}
-                  </button>
-                )}
-                {notification.files && (
-                  <div className="mt-2 w-fit px-4">
-                    {notification.files.map((file, index) => (
-                      <div
-                        key={index}
-                        className="bg-gray-200 p-2 rounded-md flex items-center space-x-2"
-                      >
-                        <span className="text-sm font-medium">{file}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           </li>
@@ -177,9 +117,7 @@ const Notification = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-11/12">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">
-                {currentNotification.name || currentNotification.title}
-              </h2>
+              <h2 className="text-lg font-semibold">Notification</h2>
               <button
                 className="text-gray-500 hover:text-gray-700"
                 onClick={closeModal}
@@ -188,16 +126,6 @@ const Notification = () => {
               </button>
             </div>
             <p>{currentNotification.message}</p>
-            {currentNotification.tags && (
-              <div className="mt-4">
-                <strong>Tags:</strong> {currentNotification.tags.join(', ')}
-              </div>
-            )}
-            {currentNotification.files && (
-              <div className="mt-4">
-                <strong>Files:</strong> {currentNotification.files.join(', ')}
-              </div>
-            )}
           </div>
         </div>
       )}

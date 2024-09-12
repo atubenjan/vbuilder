@@ -1,7 +1,6 @@
-
 /*
 
-const express = require('express');
+const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -16,11 +15,10 @@ app.use(bodyParser.json());
 
 // Create MySQL connection
 const db = mysql.createConnection({
-
-  host: 'localhost',
-  user: '',
-  password: '',
-  database: 'vbuilder_quiz_db',
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "vbuilder_quiz_db",
 });
 
 db.connect((err) => {
@@ -34,7 +32,6 @@ db.connect((err) => {
 app.post("/users", async (req, res) => {
   const { username, organization, email, password, role } = req.body;
 
-  // Validate the input fields
   if (!username || !email || !password || !role) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -45,18 +42,10 @@ app.post("/users", async (req, res) => {
       .json({ message: "Organization name is required for organizations" });
   }
 
-  // Hash the password using bcryptjs
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Generate a custom UserId in the format 'VBXXXX'
-  const generateUserId = () => {
-    const randomNum = Math.floor(1000 + Math.random() * 9000); // Generates a random 4-digit number
-    return `VB${randomNum}`;
-  };
-
+  const generateUserId = () => `VB${Math.floor(1000 + Math.random() * 9000)}`;
   const userId = generateUserId();
 
-  // Insert the new user into the database, including the organization (conditionally)
   const query = `
     INSERT INTO users (UserId, Username, Organization, Email, Password, Role)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -67,7 +56,6 @@ app.post("/users", async (req, res) => {
     [userId, username, organization, email, hashedPassword, role],
     (err, results) => {
       if (err) {
-        // Check if email already exists (unique constraint)
         if (err.code === "ER_DUP_ENTRY") {
           return res.status(409).json({ message: "Email already exists" });
         }
@@ -75,11 +63,67 @@ app.post("/users", async (req, res) => {
         return res.status(500).json({ message: "Failed to insert user" });
       }
 
-      res
-        .status(201)
-        .json({ message: "User created successfully", UserId: userId });
+      // Add notification to the notifications table
+      const notificationQuery = `
+      INSERT INTO notifications (UserId, message)
+      VALUES (?, ?)
+    `;
+      const notificationMessage = `Welcome ${username}! Your account has been successfully created.`;
+
+      db.query(notificationQuery, [userId, notificationMessage], (err) => {
+        if (err) {
+          console.error("Error inserting notification:", err);
+          return res
+            .status(500)
+            .json({ message: "Failed to add notification" });
+        }
+
+        res
+          .status(201)
+          .json({ message: "User created successfully", UserId: userId });
+      });
     }
   );
+});
+
+app.get("/notifications/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  const query = `
+    SELECT * FROM notifications
+    WHERE UserId = ?
+    ORDER BY createdAt DESC
+  `;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching notifications:", err);
+      return res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+app.put("/notifications/:id", (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    UPDATE notifications
+    SET readStatus = true
+    WHERE id = ?
+  `;
+
+  db.query(query, [id], (err) => {
+    if (err) {
+      console.error("Error updating notification status:", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to update notification status" });
+    }
+
+    res.status(200).json({ message: "Notification marked as read" });
+  });
 });
 
 // Route to handle user login
@@ -146,13 +190,15 @@ app.get("/users", (req, res) => {
   });
 });
 
-// Route to add the quiz title and id
 app.post("/quizzes", (req, res) => {
-  const { Title, QuizId } = req.body;
+  const { Title } = req.body;
 
-  if (!Title || !QuizId) {
-    return res.status(400).json({ message: "Quiz title and ID are required" });
+  if (!Title) {
+    return res.status(400).json({ message: "Quiz title is required" });
   }
+
+  const generateQuizId = () => `VB${Math.floor(1000 + Math.random() * 9000)}`;
+  const QuizId = generateQuizId();
 
   const query = "INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)";
   db.query(query, [Title, QuizId], (err, results) => {
@@ -210,7 +256,6 @@ app.get("/users/count-by-month", (req, res) => {
   });
 });
 
-// Route to add the questions and their answers
 app.post("/questions", (req, res) => {
   const { questions, QuizId } = req.body;
 
@@ -220,17 +265,23 @@ app.post("/questions", (req, res) => {
       .json({ message: "Questions and quiz ID are required" });
   }
 
+  const generateQuestionId = () =>
+    `${Math.floor(10000 + Math.random() * 90000)}`;
+
   const query =
-    "INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD) VALUES ?";
+    "INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD, Difficulty, Score) VALUES ?";
+
   const values = questions.map((q) => [
     QuizId,
     q.Question,
-    q.QuestionId,
+    generateQuestionId(),
     q.CorrectAnswer,
     q.OptionA,
     q.OptionB,
     q.OptionC,
     q.OptionD,
+    q.Difficulty || "Medium", // Default to 'Medium' if not provided
+    q.Score || 1, // Default to 1 if not provided
   ]);
 
   db.query(query, [values], (err) => {
@@ -262,7 +313,8 @@ app.get("/quizzes", (req, res) => {
     SELECT q.Title, q.QuizId, 
            qs.QuestionId, qs.Question, 
            qs.OptionA, qs.OptionB, qs.OptionC, 
-           qs.OptionD, qs.CorrectAnswer
+           qs.OptionD, qs.CorrectAnswer, 
+           qs.Difficulty, qs.Score
     FROM quizzes q
     LEFT JOIN questions qs ON q.QuizId = qs.QuizId
   `;
@@ -292,6 +344,8 @@ app.get("/quizzes", (req, res) => {
           OptionC: row.OptionC,
           OptionD: row.OptionD,
           CorrectAnswer: row.CorrectAnswer,
+          Difficulty: row.Difficulty,
+          Score: row.Score,
         });
       }
 

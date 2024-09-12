@@ -21,7 +21,7 @@ const Logout = ({ onLogout }) => {
       <div className="flex-grow w-full h-full text-black bg-white">
         <PageTitle text="Logout" showSearch={false} />
         <div className="flex items-center justify-center w-full h-full pt-20 bg-slate-200">
-          <div className="p-10 text-white rounded-lg shadow-xl bg-slate-700">
+          <div className="p-10 text-white rounded-lg shadow-xl bg-background">
             <h2>Are you sure you want to logout?</h2>
             <div className="flex items-center justify-around w-full pt-10 pb-0">
               <button
