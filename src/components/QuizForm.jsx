@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios'; // Import axios for making HTTP requests
 
 const QuizForm = ({ quiz, onSubmit }) => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleOptionChange = (questionIndex, selectedOption) => {
     setSelectedAnswers({
@@ -11,111 +14,108 @@ const QuizForm = ({ quiz, onSubmit }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    let correctCount = 0;
+    let totalScore = 0;
+    let userScore = 0;
+
     quiz.questions.forEach((question, index) => {
+      totalScore += question.Score;
+
+      // Award the question's score if the answer is correct
       if (selectedAnswers[index] === question.CorrectAnswer) {
-        correctCount++;
+        userScore += question.Score;
       }
     });
 
-    alert(
-      `You answered ${correctCount} out of ${quiz.questions.length} questions correctly!`,
-    );
+    const userId = localStorage.getItem('userId');
 
-    onSubmit(); // Reset the selected quiz after submission
+    const resultData = {
+      quizId: quiz.QuizId,
+      score: userScore,
+      totalScore: totalScore,
+      userId: userId,
+    };
+
+    console.log(quiz.QuizId);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:5000/quiz-results',
+        resultData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log('Quiz results submitted successfully:', response.data);
+      alert(`You scored ${userScore} out of ${totalScore} points!`);
+      onSubmit();
+    } catch (error) {
+      console.error('Error submitting quiz results:', error);
+      setError('Failed to submit quiz results. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!quiz) {
-    return <p>Loading quiz...</p>;
+    return <div>Loading quiz...</div>;
   }
 
-  // Reverse the order of questions
-  const reversedQuestions = [...quiz.questions].reverse();
-
   return (
-    <div className="p-4 border border-gray-300 rounded-md">
+    <form onSubmit={handleSubmit}>
       <h2>{quiz.title}</h2>
-      <form onSubmit={handleSubmit}>
-        {reversedQuestions.map((question, index) => (
-          <div key={index} className="mb-4">
-            <h4 className="mb-2">
-              <span className="pr-2">{question.QuestionId} .</span>
-              {question.Question}
-            </h4>
-            <div className="flex flex-col">
-              <label className="mb-1">
-                <input
-                  type="radio"
-                  name={`question_${index}`}
-                  value={question.OptionA}
-                  checked={selectedAnswers[index] === question.OptionA}
-                  onChange={() => handleOptionChange(index, question.OptionA)}
-                  className="mr-2"
-                />
-                {question.OptionA}
-              </label>
-              <label className="mb-1">
-                <input
-                  type="radio"
-                  name={`question_${index}`}
-                  value={question.OptionB}
-                  checked={selectedAnswers[index] === question.OptionB}
-                  onChange={() => handleOptionChange(index, question.OptionB)}
-                  className="mr-2"
-                />
-                {question.OptionB}
-              </label>
-              <label className="mb-1">
-                <input
-                  type="radio"
-                  name={`question_${index}`}
-                  value={question.OptionC}
-                  checked={selectedAnswers[index] === question.OptionC}
-                  onChange={() => handleOptionChange(index, question.OptionC)}
-                  className="mr-2"
-                />
-                {question.OptionC}
-              </label>
-              <label className="mb-1">
-                <input
-                  type="radio"
-                  name={`question_${index}`}
-                  value={question.OptionD}
-                  checked={selectedAnswers[index] === question.OptionD}
-                  onChange={() => handleOptionChange(index, question.OptionD)}
-                  className="mr-2"
-                />
-                {question.OptionD}
-              </label>
+      {error && <p className="error">{error}</p>}
+      {quiz.questions.map((question, index) => (
+        <div key={index} className="pb-3">
+          <p>
+            {index + 1}. {question.Question}
+          </p>
+          {['OptionA', 'OptionB', 'OptionC', 'OptionD'].map((option) => (
+            <div key={option} className="pl-3 py-2">
+              <input
+                type="radio"
+                name={`question-${index}`}
+                value={question[option]}
+                onChange={() => handleOptionChange(index, question[option])}
+                className="mr-2"
+              />
+              <label>{question[option]}</label>
             </div>
-          </div>
-        ))}
-        <button
-          type="submit"
-          className="px-4 py-2 text-white bg-blue-600 rounded-md"
-        >
-          Submit Quiz
-        </button>
-      </form>
-    </div>
+          ))}
+        </div>
+      ))}
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-button px-3 my-3 py-1 rounded-md"
+      >
+        {loading ? 'Submitting...' : 'Submit Quiz'}
+      </button>
+    </form>
   );
 };
 
 QuizForm.propTypes = {
   quiz: PropTypes.shape({
+    QuizId: PropTypes.string.isRequired,
     title: PropTypes.string,
     questions: PropTypes.arrayOf(
       PropTypes.shape({
-        QuestionId: PropTypes.string.isRequired,
         Question: PropTypes.string.isRequired,
-        option_a: PropTypes.string.isRequired,
-        option_b: PropTypes.string.isRequired,
-        option_c: PropTypes.string.isRequired,
-        option_d: PropTypes.string.isRequired,
-        correct_answer: PropTypes.string.isRequired,
+        OptionA: PropTypes.string.isRequired,
+        OptionB: PropTypes.string.isRequired,
+        OptionC: PropTypes.string.isRequired,
+        OptionD: PropTypes.string.isRequired,
+        CorrectAnswer: PropTypes.string.isRequired,
+        Score: PropTypes.number.isRequired,
       }),
     ).isRequired,
   }).isRequired,
