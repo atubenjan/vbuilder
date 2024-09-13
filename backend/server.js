@@ -29,6 +29,93 @@ db.connect((err) => {
   console.log("Connected to database.");
 });
 
+// JWT middleware to verify token
+function verifyToken(req, res, next) {
+  const token = req.headers["authorization"];
+
+  if (!token) {
+    return res.status(403).json({ message: "Access denied, token missing!" });
+  }
+
+  try {
+    const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+}
+
+app.post("/quiz-results", verifyToken, (req, res) => {
+  const { quizId, score, totalScore, userId } = req.body;
+
+  if (!quizId || score == null || totalScore == null || !userId) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const query = `
+    INSERT INTO quiz_results (QuizId, UserId, TotalScore, Score, CompletedAt)
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  db.query(query, [quizId, userId, totalScore, score], (err) => {
+    if (err) {
+      console.error("Error inserting quiz results:", err);
+      return res.status(500).json({ message: "Failed to insert quiz results" });
+    }
+
+    res.status(201).json({ message: "Quiz results submitted successfully!" });
+  });
+});
+
+//Get results based on user id
+app.get("/quiz-results/:userId", verifyToken, (req, res) => {
+  const { userId } = req.params;
+
+  // Ensure the user can only access their own results
+  if (userId !== req.user.userId) {
+    return res.status(403).json({ message: "Access denied!" });
+  }
+
+  const query = `SELECT * FROM quiz_results WHERE UserId = ?`;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error retrieving quiz results:", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to retrieve quiz results" });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+app.get("/quiz-results/check/:quizId/:userId", verifyToken, (req, res) => {
+  const { quizId, userId } = req.params;
+
+  const query = `SELECT * FROM quiz_results WHERE QuizId = ? AND UserId = ?`;
+
+  db.query(query, [quizId, userId], (err, results) => {
+    if (err) {
+      console.error("Error checking quiz completion:", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to check quiz completion" });
+    }
+
+    if (results.length > 0) {
+      return res
+        .status(200)
+        .json({ completed: true, message: "Quiz already completed" });
+    } else {
+      return res
+        .status(200)
+        .json({ completed: false, message: "Quiz not completed" });
+    }
+  });
+});
+
 app.post("/users", async (req, res) => {
   const { username, organization, email, password, role } = req.body;
 
@@ -213,6 +300,51 @@ app.post("/quizzes", (req, res) => {
   });
 });
 
+// Route to get a specific quiz based on QuizId
+app.get("/quizzes/:quizId", (req, res) => {
+  const { quizId } = req.params;
+
+  const query = `
+    SELECT q.Title, q.QuizId, 
+           qs.QuestionId, qs.Question, 
+           qs.OptionA, qs.OptionB, qs.OptionC, qs.OptionD, 
+           qs.CorrectAnswer, qs.Difficulty, qs.Score
+    FROM quizzes q
+    JOIN questions qs ON q.QuizId = qs.QuizId
+    WHERE q.QuizId = ?
+  `;
+
+  db.query(query, [quizId], (err, results) => {
+    if (err) {
+      console.error("Error retrieving quiz:", err);
+      return res.status(500).json({ message: "Failed to retrieve quiz" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Quiz not found" });
+    }
+
+    // Structure the response
+    const quiz = {
+      Title: results[0].Title,
+      QuizId: results[0].QuizId,
+      Questions: results.map((row) => ({
+        QuestionId: row.QuestionId,
+        Question: row.Question,
+        OptionA: row.OptionA,
+        OptionB: row.OptionB,
+        OptionC: row.OptionC,
+        OptionD: row.OptionD,
+        CorrectAnswer: row.CorrectAnswer,
+        Difficulty: row.Difficulty,
+        Score: row.Score,
+      })),
+    };
+
+    res.status(200).json(quiz);
+  });
+});
+
 // Route to count users by month
 app.get("/users/count-by-month", (req, res) => {
   const query = `
@@ -353,6 +485,26 @@ app.get("/quizzes", (req, res) => {
     }, {});
 
     res.status(200).json(Object.values(quizzes));
+  });
+});
+
+// DELETE request to delete a quiz
+app.delete("/quizzes/:quizId", verifyToken, (req, res) => {
+  const { quizId } = req.params;
+
+  const query = `DELETE FROM quizzes WHERE QuizId = ?`;
+
+  db.query(query, [quizId], (err, results) => {
+    if (err) {
+      console.error("Error deleting quiz:", err);
+      return res.status(500).json({ message: "Failed to delete quiz" });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Quiz not found" });
+    }
+
+    res.status(200).json({ message: "Quiz deleted successfully" });
   });
 });
 
