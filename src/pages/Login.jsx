@@ -20,13 +20,14 @@ const Login = ({ onLogin, logo }) => {
         password,
       });
 
-      const { token, userId, username, role } = response.data;
+      const { token, userId, username, role, organization } = response.data;
 
       // Store the JWT token, user ID, username, and role in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('userId', userId);
       localStorage.setItem('userName', username);
       localStorage.setItem('role', role);
+      localStorage.setItem('organization', organization);
 
       // Call the onLogin function and pass the userRole
       onLogin(role);
