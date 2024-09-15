@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "VB@2024"; // Replace with your secret key
 
+//Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -17,7 +18,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "Steph@0136",
   database: "vbuilder_quiz_db",
 });
 
@@ -46,6 +47,7 @@ function verifyToken(req, res, next) {
   }
 }
 
+// Send quiz results
 app.post("/quiz-results", verifyToken, (req, res) => {
   const { quizId, score, totalScore, userId } = req.body;
 
@@ -65,6 +67,26 @@ app.post("/quiz-results", verifyToken, (req, res) => {
     }
 
     res.status(201).json({ message: "Quiz results submitted successfully!" });
+  });
+});
+
+// Fetch all quiz results
+app.get("/quiz-results", verifyToken, (req, res) => {
+  const query = "SELECT * FROM quiz_results";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error retrieving quiz results:", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to retrieve quiz results" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No quiz results found" });
+    }
+
+    res.status(200).json(results);
   });
 });
 
@@ -91,6 +113,7 @@ app.get("/quiz-results/:userId", verifyToken, (req, res) => {
   });
 });
 
+// Check if a user has done a quiz already
 app.get("/quiz-results/check/:quizId/:userId", verifyToken, (req, res) => {
   const { quizId, userId } = req.params;
 
@@ -116,6 +139,7 @@ app.get("/quiz-results/check/:quizId/:userId", verifyToken, (req, res) => {
   });
 });
 
+// Create new users
 app.post("/users", async (req, res) => {
   const { username, organization, email, password, role } = req.body;
 
@@ -129,50 +153,60 @@ app.post("/users", async (req, res) => {
       .json({ message: "Organization name is required for organizations" });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const generateUserId = () => `VB${Math.floor(1000 + Math.random() * 9000)}`;
-  const userId = generateUserId();
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const generateUserId = () => `VB${Math.floor(1000 + Math.random() * 9000)}`;
+    const userId = generateUserId();
 
-  const query = `
-    INSERT INTO users (UserId, Username, Organization, Email, Password, Role)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    query,
-    [userId, username, organization, email, hashedPassword, role],
-    (err, results) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          return res.status(409).json({ message: "Email already exists" });
-        }
-        console.error("Error inserting user:", err);
-        return res.status(500).json({ message: "Failed to insert user" });
-      }
-
-      // Add notification to the notifications table
-      const notificationQuery = `
-      INSERT INTO notifications (UserId, message)
-      VALUES (?, ?)
+    const query = `
+      INSERT INTO users (UserId, Username, Organization, Email, Password, Role)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
-      const notificationMessage = `Welcome ${username}! Your account has been successfully created.`;
 
-      db.query(notificationQuery, [userId, notificationMessage], (err) => {
+    db.query(
+      query,
+      [userId, username, organization, email, hashedPassword, role],
+      (err) => {
         if (err) {
-          console.error("Error inserting notification:", err);
-          return res
-            .status(500)
-            .json({ message: "Failed to add notification" });
+          if (err.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({ message: "Email already exists" });
+          }
+          console.error("Error inserting user:", err);
+          return res.status(500).json({ message: "Failed to insert user" });
         }
 
-        res
-          .status(201)
-          .json({ message: "User created successfully", UserId: userId });
-      });
-    }
-  );
+        // Add notification to the notifications table
+        const notificationQuery = `
+        INSERT INTO notifications (UserId, Email, Username, message)
+        VALUES (?, ?, ?, ?)
+      `;
+        const notificationMessage = `Dear Admin, ${username} has created an account with email ${email} successfully created.`;
+
+        db.query(
+          notificationQuery,
+          [userId, email, username, notificationMessage],
+          (err) => {
+            if (err) {
+              console.error("Error inserting notification:", err);
+              return res
+                .status(500)
+                .json({ message: "Failed to add notification" });
+            }
+
+            res
+              .status(201)
+              .json({ message: "User created successfully", UserId: userId });
+          }
+        );
+      }
+    );
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
+//Get notification based on user id
 app.get("/notifications/:userId", (req, res) => {
   const { userId } = req.params;
 
@@ -192,6 +226,7 @@ app.get("/notifications/:userId", (req, res) => {
   });
 });
 
+// Get all notifications based on its id
 app.put("/notifications/:id", (req, res) => {
   const { id } = req.params;
 
@@ -213,7 +248,7 @@ app.put("/notifications/:id", (req, res) => {
   });
 });
 
-// Route to handle user login
+// Handle user login
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -259,15 +294,35 @@ app.post("/login", (req, res) => {
       userId: user.UserId,
       username: user.Username,
       role: user.Role,
+      organization: user.Organization,
     });
   });
 });
 
-// Route to get all users
-app.get("/users", (req, res) => {
-  const query = "SELECT * FROM users";
+// Get users as an admin or organization role
+app.get("/users", verifyToken, (req, res) => {
+  const { role, organization } = req.user;
 
-  db.query(query, (err, results) => {
+  let query;
+  let queryParams = [];
+
+  if (role === "admin") {
+    query = "SELECT * FROM users";
+  } else if (role === "organization") {
+    // Check if organization parameter is present in request
+    if (req.query.organization) {
+      query = "SELECT * FROM users WHERE Organization = ?";
+      queryParams = [req.query.organization];
+    } else {
+      // If no organization parameter, return users for the user's organization
+      query = "SELECT * FROM users WHERE Organization = ?";
+      queryParams = [organization];
+    }
+  } else {
+    return res.status(403).json({ message: "Access denied!" });
+  }
+
+  db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Error retrieving users:", err);
       return res.status(500).json({ message: "Failed to retrieve users" });
@@ -277,6 +332,79 @@ app.get("/users", (req, res) => {
   });
 });
 
+// Get users based on their id
+app.get("/users/:userId", verifyToken, (req, res) => {
+  const { userId } = req.params;
+
+  // Check if the user is an admin or organization
+  if (req.user.role === "admin" || req.user.role === "organization") {
+    // Proceed to fetch user details
+    const query =
+      "SELECT UserId, Username, Organization, Email, Role FROM users WHERE UserId = ?";
+
+    db.query(query, [userId], (err, results) => {
+      if (err) {
+        console.error("Error retrieving user details:", err);
+        return res
+          .status(500)
+          .json({ message: "Failed to retrieve user details" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.status(200).json(results[0]);
+    });
+  } else {
+    // If the user role is neither admin nor organization, deny access
+    return res.status(403).json({ message: "Access denied!" });
+  }
+});
+
+// Count users created by month
+app.get("/users/count-by-month", verifyToken, (req, res) => {
+  const { organization } = req.query;
+  const { role } = req.user; // Assuming you get the role from the verifyToken middleware
+
+  let query = `
+    SELECT MONTH(created_at) AS month, COUNT(UserId) AS count
+    FROM users
+    WHERE YEAR(created_at) = YEAR(CURDATE())
+  `;
+
+  // If the user is an organization, filter by organization
+  if (role === "organization") {
+    query += " AND Organization = ?";
+  }
+
+  query += " GROUP BY MONTH(created_at)";
+
+  db.query(
+    query,
+    role === "organization" ? [organization] : [],
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching user counts:", err);
+        return res.status(500).json({ message: "Failed to fetch user counts" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "No user counts found" });
+      }
+
+      // Prepare the counts array, indexed by month (1-12)
+      const counts = Array(12).fill(0); // initialize array for all months
+      results.forEach((row) => {
+        counts[row.month - 1] = row.count; // row.month is 1-based (Jan = 1)
+      });
+
+      res.status(200).json(counts);
+    }
+  );
+});
+
+//Create quiz
 app.post("/quizzes", (req, res) => {
   const { Title } = req.body;
 
@@ -300,7 +428,7 @@ app.post("/quizzes", (req, res) => {
   });
 });
 
-// Route to get a specific quiz based on QuizId
+// Get a quiz based on QuizId
 app.get("/quizzes/:quizId", (req, res) => {
   const { quizId } = req.params;
 
@@ -345,49 +473,7 @@ app.get("/quizzes/:quizId", (req, res) => {
   });
 });
 
-// Route to count users by month
-app.get("/users/count-by-month", (req, res) => {
-  const query = `
-    SELECT
-      DATE_FORMAT(created_at, '%b') AS month,
-      COUNT(*) AS count
-    FROM users
-    GROUP BY month
-    ORDER BY MONTH(STR_TO_DATE(month, '%b'))
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error retrieving user counts by month:", err);
-      return res
-        .status(500)
-        .json({ message: "Failed to retrieve user counts" });
-    }
-
-    // Ensure that all months are represented
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const counts = months.map((month) => {
-      const row = results.find((r) => r.month === month);
-      return row ? row.count : 0;
-    });
-
-    res.json(counts);
-  });
-});
-
+// Create questions and their answers
 app.post("/questions", (req, res) => {
   const { questions, QuizId } = req.body;
 
@@ -425,7 +511,7 @@ app.post("/questions", (req, res) => {
   });
 });
 
-// Route to get all users
+// Get all questions
 app.get("/questions", (req, res) => {
   const query = "SELECT * FROM questions";
 
@@ -439,7 +525,7 @@ app.get("/questions", (req, res) => {
   });
 });
 
-// Route to get all quizzes
+// Get all quizzes
 app.get("/quizzes", (req, res) => {
   const query = `
     SELECT q.Title, q.QuizId, 
@@ -488,7 +574,7 @@ app.get("/quizzes", (req, res) => {
   });
 });
 
-// DELETE request to delete a quiz
+// DELETE quiz based on its id
 app.delete("/quizzes/:quizId", verifyToken, (req, res) => {
   const { quizId } = req.params;
 
@@ -508,7 +594,10 @@ app.delete("/quizzes/:quizId", verifyToken, (req, res) => {
   });
 });
 
+//Set port
 const PORT = process.env.PORT || 5000;
+
+//App listening
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

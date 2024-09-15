@@ -14,14 +14,17 @@ const UserTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
 
-  // Fetch user data from the backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored on login
+        const token = localStorage.getItem('token');
+        const organization = localStorage.getItem('organization');
+
         const response = await axios.get('http://localhost:5000/users', {
-          headers: { 'x-auth-token': token },
+          headers: { Authorization: `Bearer ${token}` },
+          params: { organization },
         });
+
         setRows(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
