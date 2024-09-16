@@ -1,4 +1,4 @@
-/*   
+/* 
 CREATE DATABASE vbuilder_quiz_db;
 USE vbuilder_quiz_db;
 
@@ -48,17 +48,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (UserId) REFERENCES users(UserId) ON DELETE CASCADE,
     FOREIGN KEY (Email) REFERENCES users(Email) ON DELETE CASCADE,
     FOREIGN KEY (Username) REFERENCES users(Username) ON DELETE CASCADE
-);
-
-CREATE TABLE quiz_results (
-  ResultId INT AUTO_INCREMENT PRIMARY KEY,
-  UserId VARCHAR(255) NOT NULL,
-  QuizId VARCHAR(255) NOT NULL,
-  TotalScore INT,
-  Score INT NOT NULL,
-  CompletedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (UserId) REFERENCES users(UserId),
-  FOREIGN KEY (QuizId) REFERENCES quizzes(QuizId)
 );
 
 */

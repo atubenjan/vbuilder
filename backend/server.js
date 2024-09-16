@@ -1,14 +1,12 @@
-/*
-
-const express = require("express");
+const express = require('express');
 const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mysql = require("mysql2");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = "VB@2024"; // Replace with your secret key
+const JWT_SECRET = 'VB@2024'; // Replace with your secret key
 
 //Middleware
 app.use(cors());
@@ -16,43 +14,43 @@ app.use(bodyParser.json());
 
 // Create MySQL connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Steph@0136",
-  database: "vbuilder_quiz_db",
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'quiz_db',
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("Database connection failed:", err.stack);
+    console.error('Database connection failed:', err.stack);
     return;
   }
-  console.log("Connected to database.");
+  console.log('Connected to database.');
 });
 
 // JWT middleware to verify token
 function verifyToken(req, res, next) {
-  const token = req.headers["authorization"];
+  const token = req.headers['authorization'];
 
   if (!token) {
-    return res.status(403).json({ message: "Access denied, token missing!" });
+    return res.status(403).json({ message: 'Access denied, token missing!' });
   }
 
   try {
-    const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET);
+    const decoded = jwt.verify(token.split(' ')[1], JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: 'Invalid token' });
   }
 }
 
 // Send quiz results
-app.post("/quiz-results", verifyToken, (req, res) => {
+app.post('/quiz-results', verifyToken, (req, res) => {
   const { quizId, score, totalScore, userId } = req.body;
 
   if (!quizId || score == null || totalScore == null || !userId) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   const query = `
@@ -62,28 +60,28 @@ app.post("/quiz-results", verifyToken, (req, res) => {
 
   db.query(query, [quizId, userId, totalScore, score], (err) => {
     if (err) {
-      console.error("Error inserting quiz results:", err);
-      return res.status(500).json({ message: "Failed to insert quiz results" });
+      console.error('Error inserting quiz results:', err);
+      return res.status(500).json({ message: 'Failed to insert quiz results' });
     }
 
-    res.status(201).json({ message: "Quiz results submitted successfully!" });
+    res.status(201).json({ message: 'Quiz results submitted successfully!' });
   });
 });
 
 // Fetch all quiz results
-app.get("/quiz-results", verifyToken, (req, res) => {
-  const query = "SELECT * FROM quiz_results";
+app.get('/quiz-results', verifyToken, (req, res) => {
+  const query = 'SELECT * FROM quiz_results';
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error("Error retrieving quiz results:", err);
+      console.error('Error retrieving quiz results:', err);
       return res
         .status(500)
-        .json({ message: "Failed to retrieve quiz results" });
+        .json({ message: 'Failed to retrieve quiz results' });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "No quiz results found" });
+      return res.status(404).json({ message: 'No quiz results found' });
     }
 
     res.status(200).json(results);
@@ -91,22 +89,22 @@ app.get("/quiz-results", verifyToken, (req, res) => {
 });
 
 //Get results based on user id
-app.get("/quiz-results/:userId", verifyToken, (req, res) => {
+app.get('/quiz-results/:userId', verifyToken, (req, res) => {
   const { userId } = req.params;
 
   // Ensure the user can only access their own results
   if (userId !== req.user.userId) {
-    return res.status(403).json({ message: "Access denied!" });
+    return res.status(403).json({ message: 'Access denied!' });
   }
 
   const query = `SELECT * FROM quiz_results WHERE UserId = ?`;
 
   db.query(query, [userId], (err, results) => {
     if (err) {
-      console.error("Error retrieving quiz results:", err);
+      console.error('Error retrieving quiz results:', err);
       return res
         .status(500)
-        .json({ message: "Failed to retrieve quiz results" });
+        .json({ message: 'Failed to retrieve quiz results' });
     }
 
     res.status(200).json(results);
@@ -114,43 +112,43 @@ app.get("/quiz-results/:userId", verifyToken, (req, res) => {
 });
 
 // Check if a user has done a quiz already
-app.get("/quiz-results/check/:quizId/:userId", verifyToken, (req, res) => {
+app.get('/quiz-results/check/:quizId/:userId', verifyToken, (req, res) => {
   const { quizId, userId } = req.params;
 
   const query = `SELECT * FROM quiz_results WHERE QuizId = ? AND UserId = ?`;
 
   db.query(query, [quizId, userId], (err, results) => {
     if (err) {
-      console.error("Error checking quiz completion:", err);
+      console.error('Error checking quiz completion:', err);
       return res
         .status(500)
-        .json({ message: "Failed to check quiz completion" });
+        .json({ message: 'Failed to check quiz completion' });
     }
 
     if (results.length > 0) {
       return res
         .status(200)
-        .json({ completed: true, message: "Quiz already completed" });
+        .json({ completed: true, message: 'Quiz already completed' });
     } else {
       return res
         .status(200)
-        .json({ completed: false, message: "Quiz not completed" });
+        .json({ completed: false, message: 'Quiz not completed' });
     }
   });
 });
 
 // Create new users
-app.post("/users", async (req, res) => {
+app.post('/users', async (req, res) => {
   const { username, organization, email, password, role } = req.body;
 
   if (!username || !email || !password || !role) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (role === "organization" && !organization) {
+  if (role === 'organization' && !organization) {
     return res
       .status(400)
-      .json({ message: "Organization name is required for organizations" });
+      .json({ message: 'Organization name is required for organizations' });
   }
 
   try {
@@ -168,11 +166,11 @@ app.post("/users", async (req, res) => {
       [userId, username, organization, email, hashedPassword, role],
       (err) => {
         if (err) {
-          if (err.code === "ER_DUP_ENTRY") {
-            return res.status(409).json({ message: "Email already exists" });
+          if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ message: 'Email already exists' });
           }
-          console.error("Error inserting user:", err);
-          return res.status(500).json({ message: "Failed to insert user" });
+          console.error('Error inserting user:', err);
+          return res.status(500).json({ message: 'Failed to insert user' });
         }
 
         // Add notification to the notifications table
@@ -187,27 +185,27 @@ app.post("/users", async (req, res) => {
           [userId, email, username, notificationMessage],
           (err) => {
             if (err) {
-              console.error("Error inserting notification:", err);
+              console.error('Error inserting notification:', err);
               return res
                 .status(500)
-                .json({ message: "Failed to add notification" });
+                .json({ message: 'Failed to add notification' });
             }
 
             res
               .status(201)
-              .json({ message: "User created successfully", UserId: userId });
-          }
+              .json({ message: 'User created successfully', UserId: userId });
+          },
         );
-      }
+      },
     );
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 //Get notification based on user id
-app.get("/notifications/:userId", (req, res) => {
+app.get('/notifications/:userId', (req, res) => {
   const { userId } = req.params;
 
   const query = `
@@ -218,8 +216,8 @@ app.get("/notifications/:userId", (req, res) => {
 
   db.query(query, [userId], (err, results) => {
     if (err) {
-      console.error("Error fetching notifications:", err);
-      return res.status(500).json({ message: "Failed to fetch notifications" });
+      console.error('Error fetching notifications:', err);
+      return res.status(500).json({ message: 'Failed to fetch notifications' });
     }
 
     res.status(200).json(results);
@@ -227,7 +225,7 @@ app.get("/notifications/:userId", (req, res) => {
 });
 
 // Get all notifications based on its id
-app.put("/notifications/:id", (req, res) => {
+app.put('/notifications/:id', (req, res) => {
   const { id } = req.params;
 
   const query = `
@@ -238,36 +236,36 @@ app.put("/notifications/:id", (req, res) => {
 
   db.query(query, [id], (err) => {
     if (err) {
-      console.error("Error updating notification status:", err);
+      console.error('Error updating notification status:', err);
       return res
         .status(500)
-        .json({ message: "Failed to update notification status" });
+        .json({ message: 'Failed to update notification status' });
     }
 
-    res.status(200).json({ message: "Notification marked as read" });
+    res.status(200).json({ message: 'Notification marked as read' });
   });
 });
 
 // Handle user login
-app.post("/login", (req, res) => {
+app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   // Check if email and password are provided
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
   // Query the database to find the user by email
-  const query = "SELECT * FROM users WHERE Email = ?";
+  const query = 'SELECT * FROM users WHERE Email = ?';
   db.query(query, [email], async (err, results) => {
     if (err) {
-      console.error("Error retrieving user:", err);
-      return res.status(500).json({ message: "Server error" });
+      console.error('Error retrieving user:', err);
+      return res.status(500).json({ message: 'Server error' });
     }
 
     // If no user is found with the provided email
     if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const user = results[0];
@@ -275,7 +273,7 @@ app.post("/login", (req, res) => {
     // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.Password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Generate a JWT token
@@ -283,13 +281,13 @@ app.post("/login", (req, res) => {
       { userId: user.UserId, role: user.Role },
       JWT_SECRET,
       {
-        expiresIn: "1h", // Token expires in 1 hour
-      }
+        expiresIn: '1h', // Token expires in 1 hour
+      },
     );
 
     // Respond with the JWT token and user details
     res.status(200).json({
-      message: "Login successful",
+      message: 'Login successful',
       token,
       userId: user.UserId,
       username: user.Username,
@@ -300,32 +298,32 @@ app.post("/login", (req, res) => {
 });
 
 // Get users as an admin or organization role
-app.get("/users", verifyToken, (req, res) => {
+app.get('/users', verifyToken, (req, res) => {
   const { role, organization } = req.user;
 
   let query;
   let queryParams = [];
 
-  if (role === "admin") {
-    query = "SELECT * FROM users";
-  } else if (role === "organization") {
+  if (role === 'admin') {
+    query = 'SELECT * FROM users';
+  } else if (role === 'organization') {
     // Check if organization parameter is present in request
     if (req.query.organization) {
-      query = "SELECT * FROM users WHERE Organization = ?";
+      query = 'SELECT * FROM users WHERE Organization = ?';
       queryParams = [req.query.organization];
     } else {
       // If no organization parameter, return users for the user's organization
-      query = "SELECT * FROM users WHERE Organization = ?";
+      query = 'SELECT * FROM users WHERE Organization = ?';
       queryParams = [organization];
     }
   } else {
-    return res.status(403).json({ message: "Access denied!" });
+    return res.status(403).json({ message: 'Access denied!' });
   }
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
-      console.error("Error retrieving users:", err);
-      return res.status(500).json({ message: "Failed to retrieve users" });
+      console.error('Error retrieving users:', err);
+      return res.status(500).json({ message: 'Failed to retrieve users' });
     }
 
     res.status(200).json(results);
@@ -333,37 +331,37 @@ app.get("/users", verifyToken, (req, res) => {
 });
 
 // Get users based on their id
-app.get("/users/:userId", verifyToken, (req, res) => {
+app.get('/users/:userId', verifyToken, (req, res) => {
   const { userId } = req.params;
 
   // Check if the user is an admin or organization
-  if (req.user.role === "admin" || req.user.role === "organization") {
+  if (req.user.role === 'admin' || req.user.role === 'organization') {
     // Proceed to fetch user details
     const query =
-      "SELECT UserId, Username, Organization, Email, Role FROM users WHERE UserId = ?";
+      'SELECT UserId, Username, Organization, Email, Role FROM users WHERE UserId = ?';
 
     db.query(query, [userId], (err, results) => {
       if (err) {
-        console.error("Error retrieving user details:", err);
+        console.error('Error retrieving user details:', err);
         return res
           .status(500)
-          .json({ message: "Failed to retrieve user details" });
+          .json({ message: 'Failed to retrieve user details' });
       }
 
       if (results.length === 0) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
 
       res.status(200).json(results[0]);
     });
   } else {
     // If the user role is neither admin nor organization, deny access
-    return res.status(403).json({ message: "Access denied!" });
+    return res.status(403).json({ message: 'Access denied!' });
   }
 });
 
 // Count users created by month
-app.get("/users/count-by-month", verifyToken, (req, res) => {
+app.get('/users/count-by-month', verifyToken, (req, res) => {
   const { organization } = req.query;
   const { role } = req.user; // Assuming you get the role from the verifyToken middleware
 
@@ -374,23 +372,23 @@ app.get("/users/count-by-month", verifyToken, (req, res) => {
   `;
 
   // If the user is an organization, filter by organization
-  if (role === "organization") {
-    query += " AND Organization = ?";
+  if (role === 'organization') {
+    query += ' AND Organization = ?';
   }
 
-  query += " GROUP BY MONTH(created_at)";
+  query += ' GROUP BY MONTH(created_at)';
 
   db.query(
     query,
-    role === "organization" ? [organization] : [],
+    role === 'organization' ? [organization] : [],
     (err, results) => {
       if (err) {
-        console.error("Error fetching user counts:", err);
-        return res.status(500).json({ message: "Failed to fetch user counts" });
+        console.error('Error fetching user counts:', err);
+        return res.status(500).json({ message: 'Failed to fetch user counts' });
       }
 
       if (results.length === 0) {
-        return res.status(404).json({ message: "No user counts found" });
+        return res.status(404).json({ message: 'No user counts found' });
       }
 
       // Prepare the counts array, indexed by month (1-12)
@@ -400,36 +398,36 @@ app.get("/users/count-by-month", verifyToken, (req, res) => {
       });
 
       res.status(200).json(counts);
-    }
+    },
   );
 });
 
 //Create quiz
-app.post("/quizzes", (req, res) => {
+app.post('/quizzes', (req, res) => {
   const { Title } = req.body;
 
   if (!Title) {
-    return res.status(400).json({ message: "Quiz title is required" });
+    return res.status(400).json({ message: 'Quiz title is required' });
   }
 
   const generateQuizId = () => `VB${Math.floor(1000 + Math.random() * 9000)}`;
   const QuizId = generateQuizId();
 
-  const query = "INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)";
+  const query = 'INSERT INTO quizzes (Title, QuizId) VALUES (?, ?)';
   db.query(query, [Title, QuizId], (err, results) => {
     if (err) {
-      console.error("Error inserting quiz:", err);
-      return res.status(500).json({ message: "Failed to insert quiz" });
+      console.error('Error inserting quiz:', err);
+      return res.status(500).json({ message: 'Failed to insert quiz' });
     }
     res.status(200).json({
-      message: "Quiz info received successfully!",
+      message: 'Quiz info received successfully!',
       QuizId: QuizId,
     });
   });
 });
 
 // Get a quiz based on QuizId
-app.get("/quizzes/:quizId", (req, res) => {
+app.get('/quizzes/:quizId', (req, res) => {
   const { quizId } = req.params;
 
   const query = `
@@ -444,12 +442,12 @@ app.get("/quizzes/:quizId", (req, res) => {
 
   db.query(query, [quizId], (err, results) => {
     if (err) {
-      console.error("Error retrieving quiz:", err);
-      return res.status(500).json({ message: "Failed to retrieve quiz" });
+      console.error('Error retrieving quiz:', err);
+      return res.status(500).json({ message: 'Failed to retrieve quiz' });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "Quiz not found" });
+      return res.status(404).json({ message: 'Quiz not found' });
     }
 
     // Structure the response
@@ -474,20 +472,20 @@ app.get("/quizzes/:quizId", (req, res) => {
 });
 
 // Create questions and their answers
-app.post("/questions", (req, res) => {
+app.post('/questions', (req, res) => {
   const { questions, QuizId } = req.body;
 
   if (!questions || !QuizId) {
     return res
       .status(400)
-      .json({ message: "Questions and quiz ID are required" });
+      .json({ message: 'Questions and quiz ID are required' });
   }
 
   const generateQuestionId = () =>
     `${Math.floor(10000 + Math.random() * 90000)}`;
 
   const query =
-    "INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD, Difficulty, Score) VALUES ?";
+    'INSERT INTO questions (QuizId, Question, QuestionId, CorrectAnswer, OptionA, OptionB, OptionC, OptionD, Difficulty, Score) VALUES ?';
 
   const values = questions.map((q) => [
     QuizId,
@@ -498,27 +496,27 @@ app.post("/questions", (req, res) => {
     q.OptionB,
     q.OptionC,
     q.OptionD,
-    q.Difficulty || "Medium", // Default to 'Medium' if not provided
+    q.Difficulty || 'Medium', // Default to 'Medium' if not provided
     q.Score || 1, // Default to 1 if not provided
   ]);
 
   db.query(query, [values], (err) => {
     if (err) {
-      console.error("Error inserting questions:", err);
-      return res.status(500).json({ message: "Failed to insert questions" });
+      console.error('Error inserting questions:', err);
+      return res.status(500).json({ message: 'Failed to insert questions' });
     }
-    res.status(200).json({ message: "Questions received successfully!" });
+    res.status(200).json({ message: 'Questions received successfully!' });
   });
 });
 
 // Get all questions
-app.get("/questions", (req, res) => {
-  const query = "SELECT * FROM questions";
+app.get('/questions', (req, res) => {
+  const query = 'SELECT * FROM questions';
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error("Error retrieving questions:", err);
-      return res.status(500).json({ message: "Failed to retrieve questions" });
+      console.error('Error retrieving questions:', err);
+      return res.status(500).json({ message: 'Failed to retrieve questions' });
     }
 
     res.status(200).json(results);
@@ -526,7 +524,7 @@ app.get("/questions", (req, res) => {
 });
 
 // Get all quizzes
-app.get("/quizzes", (req, res) => {
+app.get('/quizzes', (req, res) => {
   const query = `
     SELECT q.Title, q.QuizId, 
            qs.QuestionId, qs.Question, 
@@ -539,8 +537,8 @@ app.get("/quizzes", (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error("Error retrieving quizzes:", err);
-      return res.status(500).json({ message: "Failed to retrieve quizzes" });
+      console.error('Error retrieving quizzes:', err);
+      return res.status(500).json({ message: 'Failed to retrieve quizzes' });
     }
 
     // Group results by quiz
@@ -575,22 +573,22 @@ app.get("/quizzes", (req, res) => {
 });
 
 // DELETE quiz based on its id
-app.delete("/quizzes/:quizId", verifyToken, (req, res) => {
+app.delete('/quizzes/:quizId', verifyToken, (req, res) => {
   const { quizId } = req.params;
 
   const query = `DELETE FROM quizzes WHERE QuizId = ?`;
 
   db.query(query, [quizId], (err, results) => {
     if (err) {
-      console.error("Error deleting quiz:", err);
-      return res.status(500).json({ message: "Failed to delete quiz" });
+      console.error('Error deleting quiz:', err);
+      return res.status(500).json({ message: 'Failed to delete quiz' });
     }
 
     if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "Quiz not found" });
+      return res.status(404).json({ message: 'Quiz not found' });
     }
 
-    res.status(200).json({ message: "Quiz deleted successfully" });
+    res.status(200).json({ message: 'Quiz deleted successfully' });
   });
 });
 
@@ -601,4 +599,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-*/
